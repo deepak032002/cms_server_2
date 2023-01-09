@@ -6,9 +6,9 @@ const streamUpload = require("../../middleware/uploadImage");
 const cloudinary = require("cloudinary").v2;
 const uniqueId = require("uniqid");
 cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET,
+  cloud_name: process.env.CLOUD_NAME || "dn9mifnsi",
+  api_key: process.env.API_KEY || "266232138793352",
+  api_secret: process.env.API_SECRET || "4apR0zzXvHGuFCTE-00FpLih7XA",
 });
 const multer = require("multer");
 const router = Router();

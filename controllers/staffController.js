@@ -1,6 +1,6 @@
 const { Staff } = require("../model/staff/staffModel");
 const bcrypt = require("bcrypt");
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || "jkashiwesahbjhbjsax6w6w69dwdwwwc3sa6";
 const jwt = require("jsonwebtoken");
 
 exports.registerUser = async (req, res, next) => {
