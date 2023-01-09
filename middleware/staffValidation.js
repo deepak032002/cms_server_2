@@ -2,6 +2,7 @@ const Joi = require("joi");
 
 const staffSchemaValidate = Joi.object().keys({
   registrationNum: Joi.string().required(),
+  userId: Joi.string().required(),
   academic: Joi.string().allow(null, ""),
   subject: Joi.string().allow(null, ""),
   designation: Joi.string().allow(null, ""),
@@ -35,7 +36,7 @@ const staffSchemaValidate = Joi.object().keys({
     permanent: Joi.object().required(),
     current: Joi.object().required(),
   }).required(),
-  academic_details: Joi.array().required(),
+  academic_details: Joi.object().required(),
   work_experience: Joi.array().required(),
   earliest_date_join: Joi.date().required(),
   total_experience: Joi.string().required(),

@@ -5,6 +5,10 @@ const staffFormSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  userId: {
+    type: String,
+    required: true,
+  },
   category: {
     type: String,
     required: true,

@@ -4,10 +4,11 @@ const { StaffForm } = require("../../model/staff/staffModel");
 const fetchUser = require("../../middleware/fetchUser");
 const streamUpload = require("../../middleware/uploadImage");
 const cloudinary = require("cloudinary").v2;
+const uniqueId = require("uniqid");
 cloudinary.config({
-  cloud_name: "dn9mifnsi",
-  api_key: "266232138793352",
-  api_secret: "4apR0zzXvHGuFCTE-00FpLih7XA",
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
 });
 const multer = require("multer");
 const router = Router();
@@ -46,8 +47,10 @@ router.post(
     try {
       const image = await streamUpload(req);
       req.body.personal_details.image = image.secure_url;
+      req.body.registrationNum = `ONL/MAR23/${uniqueId.time()}`;
+      req.body.userId = req.user;
+
       const { error } = staffSchemaValidate.validate(req.body);
-      req.body.user = user;
 
       if (error) {
         return res.json({ error: error.details, success: false });
