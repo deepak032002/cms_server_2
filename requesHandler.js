@@ -1,23 +1,23 @@
 const crypto = require("crypto");
 
-const encryptData = function (plainText, workingKey) {
-  //   var m = crypto.createHash("md5");
-  //   m.update(workingKey);
-  //   var key = m.digest("binary");
-  //   var iv = "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f";
-  //   var cipher = crypto.createCipheriv("aes-128-cbc", key, iv);
-  //   var encoded = cipher.update(plainText, "utf8", "hex");
-  //   encoded += cipher.final("hex");
-  //   return encoded;
+const encryptData = function (data, workingKey) {
+  // function encryptRequest(data) {
 
-  // create a cipher object using the algorithm you want to use for encryption
+  //   const encryptedData = crypto
+  //     .createCipheriv("aes-128-cbc", workingKey, "9876543210987654")
+  //     .update(stringToEncrypt, "utf8", "base64");
+  //   return encryptedData;
+  // }
+  const stringToEncrypt = `${workingKey}|${data.order_id}|${data.amount}|${data.currency}|${data.merchant_id}`;
   const cipher = crypto.createCipher("aes-256-cbc", workingKey);
 
   // encrypt the data
-  let encrypted = cipher.update(plainText, "utf8", "hex");
+  let encrypted = cipher.update(stringToEncrypt, "utf8", "hex");
   encrypted += cipher.final("hex");
-  //   console.log(encrypted);
+
   return encrypted;
+
+  // return encryptRequest(data);
 };
 
 exports.postReq = (request, response) => {
@@ -29,10 +29,10 @@ exports.postReq = (request, response) => {
       return response.status(404).send("user_info required field!");
     }
 
-    const encRequest = encryptData(JSON.stringify(request.body), workingKey);
+    const encRequest = encryptData(request.body, workingKey);
     const formBody = `
     <form class="flex items-center justify-center w-full h-full flex-col" id="nonseamless" method="post" name="redirect" action="https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction"/> 
-        <h1 class="text-2xl font-bold">Welcome Your form is successfully filled</h1>
+        <h1 class="text-3xl font-bold">Welcome Your form is successfully filled</h1>
         <h2>Click on continue button and proceed for payment</h2>
         <input type="hidden" id="encRequest" name="encRequest" value="${encRequest}">
         <input type="hidden" name="access_code" id="access_code" value="${accessCode}">
