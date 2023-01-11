@@ -29,7 +29,7 @@ router.post("/register", passwordHash, registerUser);
 // Login Staff
 router.post("/login", loginUser);
 // Get Staff
-router.post("/getuser", fetchUser, getUser);
+router.get("/getuser", fetchUser, getUser);
 
 // Create Staff Forms
 router.post(

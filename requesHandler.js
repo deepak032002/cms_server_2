@@ -8,8 +8,9 @@ const encryptData = function (data, workingKey) {
   //     .update(stringToEncrypt, "utf8", "base64");
   //   return encryptedData;
   // }
-  const stringToEncrypt = `${workingKey}|${data.order_id}|${data.amount}|${data.currency}|${data.merchant_id}`;
-  const cipher = crypto.createCipher("aes-256-cbc", workingKey);
+  const stringToEncrypt = `${workingKey}|${data.order_id}|${data.amount}|${data.currency}|${data.merchant_id}|||||||||||`;
+  const iv = crypto.randomBytes(16)
+  const cipher = crypto.createCipheriv("aes-256-cbc", workingKey, iv);
 
   // encrypt the data
   let encrypted = cipher.update(stringToEncrypt, "utf8", "hex");
@@ -22,8 +23,8 @@ const encryptData = function (data, workingKey) {
 
 exports.postReq = (request, response) => {
   try {
-    const workingKey = "BD81D9FE1E0C9E2E624FB70E89F01C90"; //Put in the 32-Bit key shared by CCAvenues.
-    const accessCode = "AVXX94KA47AN39XXNA"; //Put in the Access Code shared by CCAvenues.
+    const workingKey = "BD81D9FE1E0C9E2E624FB70E89F01C90";
+    const accessCode = "AVXX94KA47AN39XXNA";
 
     if (!request.body) {
       return response.status(404).send("user_info required field!");

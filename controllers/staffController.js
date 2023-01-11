@@ -1,7 +1,6 @@
 const bcrypt = require("bcrypt");
 const uniqueId = require("uniqid");
 const jwt = require("jsonwebtoken");
-
 const JWT_SECRET =
   process.env.JWT_SECRET || "jkashiwesahbjhbjsax6w6w69dwdwwwc3sa6";
 const staffSchemaValidate = require("../middleware/staffValidation");
@@ -104,7 +103,9 @@ exports.staffForm = async (req, res) => {
     const data = StaffForm(req.body);
     if (data) {
       data.save();
-      return res.status(201).json({ msg: "Created Successfully", success: true });
+      return res
+        .status(201)
+        .json({ msg: "Created Successfully", success: true });
     }
   } catch (error) {
     console.log(error);
@@ -141,7 +142,9 @@ exports.staffFormUpdate = async (req, res) => {
 
 exports.getform = async (req, res) => {
   try {
-    const userForm = await StaffForm.findOne({ userId: req.user });
+    const userForm = await StaffForm.findOne({ userId: req.user }).select(
+      "-_id"
+    );
 
     if (userForm) {
       return res.status(200).json({ form: userForm, success: true });
@@ -151,17 +154,3 @@ exports.getform = async (req, res) => {
     return res.status(500).send(error);
   }
 };
-
-// exports.encryptData = (req, res) => {
-//   try {
-//     ccavenue.setMerchant("1918298");
-//     ccavenue.setWorkingKey("BD81D9FE1E0C9E2E624FB70E89F01C90");
-//     ccavenue.setOrderId(uniqueId());
-//     ccavenue.setRedirectUrl("http://careers.cmsitportal.org:3000/payment");
-//     ccavenue.setOrderAmount("500");
-//     ccavenue.makePayment(res);
-
-//   } catch (error) {
-//     return res.status(500).send(error);
-//   }
-// };
