@@ -120,7 +120,7 @@ const staffFormSchema = mongoose.Schema({
   },
 
   academic_details: {
-    type: Array,
+    type: Object,
     required: true,
   },
 
@@ -166,9 +166,7 @@ const StaffForm = mongoose.model("staffForm", staffFormSchema);
 StaffForm.createIndexes();
 exports.StaffForm = StaffForm;
 
-// =============== Staff Login Schema ===========================
-
-// =============== Staff SignUp Schema ===========================
+// =============== Staff Schema ===========================
 
 const staffSchema = mongoose.Schema({
   name: {
