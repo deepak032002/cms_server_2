@@ -20,7 +20,7 @@ const {
   encryptData,
 } = require("../../controllers/staffController");
 const reqhandler = require("../../requesHandler");
-
+const reshandler = require("../../responseHandler");
 const passwordHash = require("../../middleware/passwordHash");
 const upload = multer();
 
@@ -52,5 +52,6 @@ router.get("/form", fetchUser, getform);
 //
 // router.get("/encrypt", encryptData);
 router.post("/paymentInitiator", reqhandler.postReq);
+router.post("/paymentResponse", reshandler.postRes);
 
 module.exports = router;
