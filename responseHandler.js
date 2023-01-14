@@ -1,46 +1,31 @@
-const qs = require("querystring");
-const crypto = require("crypto");
-const decrypt = function (encText, workingKey) {
-  var m = crypto.createHash("md5");
-  m.update(workingKey);
-  var key = m.digest("binary");
-  var iv = crypto.randomBytes(16);
-  var decipher = crypto.createDecipheriv("aes-128-cbc", key, iv);
-  var decoded = decipher.update(encText, "hex", "utf8");
-  decoded += decipher.final("utf8");
-  return decoded;
-};
+const nodeCCAvenue = require("node-ccavenue");
+const ccav = new nodeCCAvenue.Configure({
+  merchant_id: 1918298,
+  working_key: "BD81D9FE1E0C9E2E624FB70E89F01C90",
+});
 
-exports.postRes = function (request, response) {
-  // let ccavEncResponse = "";
-  // let ccavResponse = "";
-  // let ccavPOST = "";
+const { StaffForm } = require("./model/staff/staffModel");
 
+exports.postRes = async (request, response) => {
   try {
-    const workingKey = "BD81D9FE1E0C9E2E624FB70E89F01C90";
-    const accessCode = "AVXX94KA47AN39XXNA";
+    const { encResp } = request.body;
+    const decryptedJsonResponse = ccav.redirectResponseToJson(encResp);
 
-    // ccavEncResponse += request.data;
-    // ccavPOST = qs.parse(ccavEncResponse);
-    // var encryption = ccavPOST.encResp;
+    if (decryptedJsonResponse.order_status === "Success") {
+      console.log("Helllo", decryptedJsonResponse.order_id);
 
-    if (!request.body.data) {
-      return response.status(404).send("Data not found!");
+      const data = await StaffForm.findOneAndUpdate(
+        { orderId: decryptedJsonResponse.order_id },
+        { paymentConfirmation: true }
+      );
+
+      if (data) {
+        response.redirect(`${process.env.FRONTEND_URL}/welcome`);
+      }
     }
 
-    const decryptData = decrypt(request.body.data, workingKey);
-    response.send(decryptData);
+    // return response.status(200).send(decryptedJsonResponse);
   } catch (error) {
-    response.status(400).send(error);
+    return response.status(500).send(error);
   }
-
-  // var pData = "";
-  // pData = "<table border=1 cellspacing=2 cellpadding=2><tr><td>";
-  // pData = pData + ccavResponse.replace(/=/gi, "</td><td>");
-  // pData = pData.replace(/&/gi, "</td></tr><tr><td>");
-  // pData = pData + "</td></tr></table>";
-  // htmlcode =
-  //   '<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Response Handler</title></head><body><center><font size="4" color="blue"><b>Response Page</b></font><br>' +
-  //   pData +
-  //   "</center><br></body></html>";
 };

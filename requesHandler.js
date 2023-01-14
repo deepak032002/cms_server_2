@@ -4,6 +4,8 @@ const ccav = new nodeCCAvenue.Configure({
   working_key: "BD81D9FE1E0C9E2E624FB70E89F01C90",
 });
 
+const { StaffForm } = require("./model/staff/staffModel");
+
 // const encryptData = function (data) {
 //   const stringToEncrypt = `${workingKey}|${data.merchant_id}|${data.order_id}|${data.amount}|${data.currency}|${data.redirect_url}|${data.cancel_url}|${data.billing_name}|${data.billing_address}|${data.billing_city}|${data.billing_state}|${data.billing_zip}|${data.billing_country}|${data.billing_tel}|${data.billing_email}|${data.delivery_name}|${data.delivery_address}|${data.delivery_city}|${data.delivery_state}|${data.delivery_zip}|${data.delivery_country}|${data.delivery_tel}|${data.merchant_param1}|${data.merchant_param2}|${data.merchant_param3}|${data.merchant_param4}|${data.merchant_param5}`;
 //   // const iv = crypto.randomBytes(16);
@@ -22,10 +24,9 @@ const ccav = new nodeCCAvenue.Configure({
 //   // return encryptRequest(data);
 // };
 
-exports.postReq = (request, response) => {
+exports.postReq = async (request, response) => {
   try {
     const accessCode = "AVXX94KA47AN39XXNA";
-
     if (!request.body.billing_name && !request.body.order_id) {
       return response.status(404).send("orderId and name must");
     }
@@ -34,17 +35,30 @@ exports.postReq = (request, response) => {
       order_id: request.body.order_id,
       currency: "INR",
       amount: "600",
-      cancel_url: "http://localhost:3000/vacancy/successfull_payment/",
+      cancel_url: `${process.env.REDIRECT_URL}/vacancy/paymentResponse/`,
       redirect_url: encodeURIComponent(
-        `http://localhost:3000/vacancy/successfull_payment/`
+        `${process.env.REDIRECT_URL}/vacancy/paymentResponse/`
       ),
       billing_name: request.body.billing_name,
-      // etc etc
     };
 
-    const encryptedOrderData = ccav.getEncryptedOrder(orderParams);
+    const isPaymentDone = await StaffForm.findOne({ userId: request.user });
 
-    const formBody = `
+    if (isPaymentDone.paymentConfirmation) {
+      return response
+        .status(200)
+        .send("<h1 class='text-2xl font-bold'>Payment Already Done!</h1>");
+    }
+
+    const data = await StaffForm.findOneAndUpdate(
+      { userId: request.user },
+      { orderId: request.body.order_id }
+    );
+
+    if (data) {
+      const encryptedOrderData = ccav.getEncryptedOrder(orderParams);
+
+      const formBody = `
       <form class="flex items-center justify-center w-full h-full flex-col" id="nonseamless" method="post" name="redirect" action="https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction"/>
           <h1 class="text-3xl font-bold">Welcome Your form is successfully filled</h1>
           <h2>Click on continue button and proceed for payment</h2>
@@ -54,7 +68,8 @@ exports.postReq = (request, response) => {
       </form>
     `;
 
-    return response.status(200).send(formBody);
+      return response.status(200).send(formBody);
+    }
   } catch (error) {
     response.status(400).send(error);
   }

@@ -5,6 +5,11 @@ const staffFormSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+
+  orderId: {
+    type: String,
+  },
+
   userId: {
     type: String,
     required: true,
@@ -162,9 +167,13 @@ const staffFormSchema = mongoose.Schema({
   },
 });
 
-const StaffForm = mongoose.model("staffForm", staffFormSchema);
-StaffForm.createIndexes();
-exports.StaffForm = StaffForm;
+try {
+  const StaffForm = mongoose.model("staffForm", staffFormSchema);
+  StaffForm.createIndexes();
+  exports.StaffForm = StaffForm;
+} catch (error) {
+  console.log(error);
+}
 
 // =============== Staff Schema ===========================
 
@@ -185,6 +194,10 @@ const staffSchema = mongoose.Schema({
   },
 });
 
-const Staff = mongoose.model("staff", staffSchema);
-Staff.createIndexes();
-exports.Staff = Staff;
+try {
+  const Staff = mongoose.model("staff", staffSchema);
+  Staff.createIndexes();
+  exports.Staff = Staff;
+} catch (error) {
+  console.log(error);
+}

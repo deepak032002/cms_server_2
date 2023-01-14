@@ -3,9 +3,9 @@ const fetchUser = require("../../middleware/fetchUser");
 
 const cloudinary = require("cloudinary").v2;
 cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME || "dn9mifnsi",
-  api_key: process.env.API_KEY || "266232138793352",
-  api_secret: process.env.API_SECRET || "4apR0zzXvHGuFCTE-00FpLih7XA",
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
 });
 
 const multer = require("multer");
@@ -17,7 +17,6 @@ const {
   staffForm,
   getform,
   staffFormUpdate,
-  encryptData,
 } = require("../../controllers/staffController");
 const reqhandler = require("../../requesHandler");
 const reshandler = require("../../responseHandler");
@@ -51,7 +50,7 @@ router.get("/form", fetchUser, getform);
 
 //
 // router.get("/encrypt", encryptData);
-router.post("/paymentInitiator", reqhandler.postReq);
+router.post("/paymentInitiator", fetchUser, reqhandler.postReq);
 router.post("/paymentResponse", reshandler.postRes);
 
 module.exports = router;

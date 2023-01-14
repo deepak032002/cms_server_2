@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
-const JWT_SECRET =
-  process.env.JWT_SECRET || "jkashiwesahbjhbjsax6w6w69dwdwwwc3sa6";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const fetchUser = (req, res, next) => {
   try {

@@ -3,6 +3,7 @@ const Joi = require("joi");
 const staffSchemaValidate = Joi.object().keys({
   _id: Joi.string(),
   __v: Joi.string(),
+  orderId: Joi.string(),
   registrationNum: Joi.string().required(),
   userId: Joi.string().required(),
   academic: Joi.string().allow(null, ""),

@@ -1,8 +1,7 @@
 const bcrypt = require("bcrypt");
 const uniqueId = require("uniqid");
 const jwt = require("jsonwebtoken");
-const JWT_SECRET =
-  process.env.JWT_SECRET || "jkashiwesahbjhbjsax6w6w69dwdwwwc3sa6";
+const JWT_SECRET = process.env.JWT_SECRET;
 const staffSchemaValidate = require("../middleware/staffValidation");
 const { Staff, StaffForm } = require("../model/staff/staffModel");
 const streamUpload = require("../middleware/uploadImage");
@@ -125,7 +124,10 @@ exports.staffFormUpdate = async (req, res) => {
     if (error) {
       return res.status(400).json({ error: error.details, success: false });
     }
-    const data = StaffForm.findOneAndUpdate({ userId: req.user }, req.body);
+    const data = await StaffForm.findOneAndUpdate(
+      { userId: req.user },
+      req.body
+    );
 
     if (data) {
       return res
