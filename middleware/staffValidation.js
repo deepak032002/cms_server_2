@@ -13,6 +13,7 @@ const staffSchemaValidate = Joi.object().keys({
   category: Joi.string().required(),
   campus_prefrence: Joi.array().required(),
   personal_details: Joi.object({
+    image_url: Joi.string(),
     first_name: Joi.string().required(),
     middle_name: Joi.string().allow(null, ""),
     last_name: Joi.string().required(),
@@ -48,6 +49,6 @@ const staffSchemaValidate = Joi.object().keys({
   declaration: Joi.boolean().required(),
   isShortlisted: Joi.boolean().required(),
   paymentConfirmation: Joi.boolean().required(),
-});
+}).unknown(true)
 
 module.exports = staffSchemaValidate;

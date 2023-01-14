@@ -10,7 +10,6 @@ const user = require("./routes/vacancy/userRoute");
 
 require("./db")();
 const app = express();
-// require("dotenv").config({ path: "config/config.env" });
 
 app.use(helmet());
 app.use(bodyParser.json());

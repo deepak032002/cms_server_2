@@ -35,7 +35,9 @@ exports.postReq = async (request, response) => {
       order_id: request.body.order_id,
       currency: "INR",
       amount: "600",
-      cancel_url: `${process.env.REDIRECT_URL}/vacancy/paymentResponse/`,
+      cancel_url: encodeURIComponent(
+        `${process.env.REDIRECT_URL}/vacancy/paymentResponse/`
+      ),
       redirect_url: encodeURIComponent(
         `${process.env.REDIRECT_URL}/vacancy/paymentResponse/`
       ),

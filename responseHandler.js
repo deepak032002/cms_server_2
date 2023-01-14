@@ -12,19 +12,21 @@ exports.postRes = async (request, response) => {
     const decryptedJsonResponse = ccav.redirectResponseToJson(encResp);
 
     if (decryptedJsonResponse.order_status === "Success") {
-      console.log("Helllo", decryptedJsonResponse.order_id);
-
       const data = await StaffForm.findOneAndUpdate(
         { orderId: decryptedJsonResponse.order_id },
         { paymentConfirmation: true }
       );
 
       if (data) {
-        response.redirect(`${process.env.FRONTEND_URL}/welcome`);
+        return response.redirect(
+          `${process.env.FRONTEND_URL}/paymentSuccess?status=success`
+        );
       }
+    } else {
+      return response.redirect(
+        `${process.env.FRONTEND_URL}/paymentSuccess?status=failed`
+      );
     }
-
-    // return response.status(200).send(decryptedJsonResponse);
   } catch (error) {
     return response.status(500).send(error);
   }
