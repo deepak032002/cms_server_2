@@ -9,8 +9,8 @@ const { StaffForm } = require("./model/staff/staffModel");
 exports.postRes = async (request, response) => {
   try {
     const { encResp } = request.body;
+    console.log("encResp: ", encResp);
     const decryptedJsonResponse = ccav.redirectResponseToJson(encResp);
-
     if (decryptedJsonResponse.order_status === "Success") {
       const data = await StaffForm.findOneAndUpdate(
         { orderId: decryptedJsonResponse.order_id },
