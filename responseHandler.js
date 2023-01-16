@@ -9,8 +9,8 @@ const { StaffForm } = require("./model/staff/staffModel");
 exports.postRes = async (request, response) => {
   try {
     const { encResp } = request.body;
-    console.log("encResp: ", encResp);
     const decryptedJsonResponse = ccav.redirectResponseToJson(encResp);
+    console.log(decryptedJsonResponse);
     if (decryptedJsonResponse.order_status === "Success") {
       const data = await StaffForm.findOneAndUpdate(
         { orderId: decryptedJsonResponse.order_id },
@@ -19,7 +19,7 @@ exports.postRes = async (request, response) => {
 
       if (data) {
         return response.redirect(
-          `${process.env.FRONTEND_URL}/paymentSuccess?status=success`
+          `${process.env.FRONTEND_URL}/paymentSuccess?status=success,orderNo=`
         );
       }
     } else {
