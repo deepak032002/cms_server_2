@@ -19,12 +19,12 @@ exports.postRes = async (request, response) => {
 
       if (data) {
         return response.redirect(
-          `${process.env.FRONTEND_URL}/paymentSuccess?status=success,orderNo=`
+          `${process.env.FRONTEND_URL}/paymentSuccess?status=success&orderNo=${decryptedJsonResponse.order_id}&amount=${decryptedJsonResponse.amount}`
         );
       }
     } else {
       return response.redirect(
-        `${process.env.FRONTEND_URL}/paymentSuccess?status=failed`
+        `${process.env.FRONTEND_URL}/paymentSuccess?status=failed&orderNo=${decryptedJsonResponse.order_id}&amount=${decryptedJsonResponse.amount}`
       );
     }
   } catch (error) {
