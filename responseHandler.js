@@ -10,7 +10,7 @@ exports.postRes = async (request, response) => {
   try {
     const { encResp } = request.body;
     const decryptedJsonResponse = ccav.redirectResponseToJson(encResp);
-    console.log(decryptedJsonResponse);
+    console.log(encResp, decryptedJsonResponse);
     if (decryptedJsonResponse.order_status === "Success") {
       const data = await StaffForm.findOneAndUpdate(
         { orderId: decryptedJsonResponse.order_id },
