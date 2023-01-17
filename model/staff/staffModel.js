@@ -153,6 +153,22 @@ const staffFormSchema = mongoose.Schema(
       required: true,
     },
 
+    referenceName1: {
+      type: String,
+    },
+
+    referenceName2: {
+      type: String,
+    },
+
+    referenceMobile1: {
+      type: String,
+    },
+
+    referenceMobile2: {
+      type: String,
+    },
+
     declaration: {
       type: Boolean,
       required: true,
@@ -194,6 +210,14 @@ const staffSchema = mongoose.Schema({
   password: {
     type: String,
     required: true,
+  },
+
+  passwordResetToken: {
+    type: String,
+  },
+
+  passwordResetExpires: {
+    type: Date,
   },
 });
 

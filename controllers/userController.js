@@ -2,14 +2,14 @@ const ErrorHander = require("../utils/errorhander");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const User = require("../model/staff/userModel");
 const sendToken = require("../utils/jwtToken");
-const sendEmail = require("../utils/sendEmail");
+const sendMail = require("../utils/sendMail");
 const cloudinary = require("cloudinary");
-const crypto = require('crypto')
+const crypto = require("crypto");
 
 // Register a User
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
   // const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-  //   folder: "avatars", 
+  //   folder: "avatars",
   //   width: 150,
   //   crop: "scale",
   // });
@@ -86,7 +86,7 @@ exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
   const message = `Your password reset token is :- \n\n ${resetPasswordUrl} \n\nIf you have not requested this email then, please ignore it.`;
 
   try {
-    await sendEmail({
+    await sendMail({
       email: user.email,
       subject: `CMS Password Recovery`,
       message,

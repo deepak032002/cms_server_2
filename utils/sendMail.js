@@ -2,18 +2,19 @@ const nodeMailer = require("nodemailer");
 
 const sendEmail = async (options) => {
   const transporter = nodeMailer.createTransport({
-    host: process.env.SMPT_HOST,
-    port: process.env.SMPT_PORT,
-    service: process.env.SMPT_SERVICE,
+    host: "smtp.gmail.com",
+    secure: false,
+    port: 587,
     auth: {
-      user: process.env.SMPT_MAIL,
-      pass: process.env.SMPT_PASSWORD,
+      user: "no-reply-recruitment@cmseducation.org",
+      pass: "$^&NoRec",
     },
   });
 
   const mailOptions = {
-    from: process.env.SMPT_MAIL,
+    from: "no-reply-recruitment@cmseducation.org",
     to: options.email,
+    // to:"shubhjoshi114@gmail.com",
     subject: options.subject,
     text: options.message,
   };

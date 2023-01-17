@@ -17,6 +17,8 @@ const {
   staffForm,
   getform,
   staffFormUpdate,
+  forgetPassword,
+  resetPassword,
 } = require("../../controllers/staffController");
 const reqhandler = require("../../requesHandler");
 const reshandler = require("../../responseHandler");
@@ -52,5 +54,8 @@ router.get("/form", fetchUser, getform);
 // router.get("/encrypt", encryptData);
 router.post("/paymentInitiator", fetchUser, reqhandler.postReq);
 router.post("/paymentResponse", reshandler.postRes);
+
+router.post("/forget-password", forgetPassword);
+router.post("/reset-password", resetPassword);
 
 module.exports = router;
