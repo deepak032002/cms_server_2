@@ -59,7 +59,7 @@ exports.postReq = async (request, response) => {
 
     if (data) {
       const encryptedOrderData = ccav.getEncryptedOrder(orderParams);
-
+      console.log("Encrypted Request String-", encryptedOrderData);
       const formBody = `
       <form class="flex items-center justify-center w-full h-full flex-col" id="nonseamless" method="post" name="redirect" action="https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction"/>
           <h1 class="text-3xl font-bold">Welcome Your form is successfully filled</h1>
