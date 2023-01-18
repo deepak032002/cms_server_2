@@ -110,8 +110,8 @@ exports.staffForm = async (req, res) => {
     const image = await streamUpload(req);
     req.body.personal_details.image = image.secure_url;
     req.body.registrationNum = `ONL/MAR23/${
-      Math.floor(Math.random() * (10000000000 - 999999999 + 1)) + 999999999
-    }`.split(0, 13)[0];
+      Math.floor(Math.random() * (10000000 - 9999999 + 1)) + 9999999
+    }`;
     req.body.userId = req.user;
 
     const { error } = staffSchemaValidate.validate(req.body);
