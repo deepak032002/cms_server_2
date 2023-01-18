@@ -41,7 +41,7 @@ const staffSchemaValidate = Joi.object().keys({
     current: Joi.object().required(),
   }).required(),
   academic_details: Joi.object().required(),
-  work_experience: Joi.array().required(),
+  work_experience: Joi.array(),
   earliest_date_join: Joi.date().required(),
   total_experience: Joi.string().required(),
   blood_relative: Joi.object(),

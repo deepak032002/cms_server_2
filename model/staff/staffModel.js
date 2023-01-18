@@ -212,6 +212,15 @@ const staffSchema = mongoose.Schema({
     required: true,
   },
 
+  otp: {
+    type: String,
+  },
+
+  verifyEmail: {
+    type: Boolean,
+    default: false,
+  },
+
   passwordResetToken: {
     type: String,
   },

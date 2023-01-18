@@ -6,11 +6,17 @@ const staffSchemaValidate = require("../middleware/staffValidation");
 const { Staff, StaffForm } = require("../model/staff/staffModel");
 const streamUpload = require("../middleware/uploadImage");
 const sendMail = require("../utils/sendMail");
+const otpGenerator = require("otp-generator");
 
 const crypto = require("crypto");
 
 exports.registerUser = async (req, res, next) => {
   const { name, email, password, confirm_password } = req.body;
+
+  const otp = otpGenerator.generate(6, {
+    upperCaseAlphabets: false,
+    specialChars: false,
+  });
 
   if (!name || !email || !password || !confirm_password) {
     return res
@@ -24,18 +30,27 @@ exports.registerUser = async (req, res, next) => {
       .status(409)
       .json({ success: false, message: "email already registered!" });
   }
-
   const staff = await new Staff({
     name,
     email,
     password,
+    otp,
   });
   console.log(staff);
   if (staff) {
     staff.save();
-    return res
-      .status(201)
-      .json({ success: true, message: "Successfully created" });
+
+    const message = `Your otp for verification is ${otp}`;
+
+    sendMail({
+      email,
+      subject: "Email Verification",
+      message: message,
+    });
+    return res.status(201).json({
+      success: true,
+      message: "Successfully created and Otp send to your email address!",
+    });
   }
 };
 
@@ -96,13 +111,13 @@ exports.staffForm = async (req, res) => {
     req.body.personal_details.image = image.secure_url;
     req.body.registrationNum = `ONL/MAR23/${
       Math.floor(Math.random() * (10000000000 - 999999999 + 1)) + 999999999
-    }`.split(0, 13);
+    }`.split(0, 13)[0];
     req.body.userId = req.user;
 
     const { error } = staffSchemaValidate.validate(req.body);
 
     if (error) {
-      return res.json({ error: error.details, success: false });
+      return res.status(400).json({ error: error.details, success: false });
     }
     const data = StaffForm(req.body);
     if (data) {
@@ -217,6 +232,58 @@ exports.forgetPassword = async (req, res) => {
     });
 
     return res.status(200).send("Reset url send on email please verify.");
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
+
+exports.resendEmailOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await Staff.findOne({ email });
+
+    if (!user) {
+      return res.status(404).send("User not found!");
+    }
+
+    const otp = otpGenerator.generate(6, {
+      upperCaseAlphabets: false,
+      specialChars: false,
+    });
+
+    user.otp = otp;
+    await user.save();
+
+    const message = `Your otp for verification is ${otp}`;
+
+    sendMail({
+      email,
+      subject: "Email Verification",
+      message: message,
+    });
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
+
+exports.verifyEmail = async (req, res) => {
+  try {
+    const { otp, email } = req.body;
+
+    const user = await Staff.findOne({ email });
+
+    if (!user) {
+      return res.status(404).send("User not found with this email!");
+    }
+
+    if (user.otp === otp) {
+      user.verifyEmail = true;
+      user.save();
+      return res.status(200).send("Successful verified your email!");
+    }
+
+    return res.status(404).send("Invalid credentials!");
   } catch (error) {
     return res.status(500).send(error);
   }
