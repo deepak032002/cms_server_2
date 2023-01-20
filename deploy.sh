@@ -13,4 +13,4 @@ read $COMMAND_NAME
 
 pm2 start yarn --name $PROCESS_NAME -- $COMMAND_NAME
 
-echo Start Successfully :)
+echo Start Successfully
