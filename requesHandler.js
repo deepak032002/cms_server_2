@@ -76,26 +76,3 @@ exports.postReq = async (request, response) => {
     response.status(400).send(error);
   }
 };
-
-// const encryptedData = ccav.encrypt(
-//   "Just plain text to encrypt or uri encoded order information"
-// );
-// console.log(encryptedData);
-// const decryptedData = ccav.decrypt(encryptedData);
-// console.log(decryptedData, "<---------99"); // Proceed further
-// Proceed further
-
-//   app.post('/api/redirect_url', (req, res) => {
-//     const { encResp } = req.body;
-//     const decryptedJsonResponse = ccav.redirectResponseToJson(encResp);
-//     // To check order_status: -
-//     console.log(decryptedJsonResponse.order_status);
-//   });
-
-// app.get('/', (req, res) => {
-//   res.send('Hello World!')
-// })
-
-// app.listen(port, () => {
-//   console.log(` app listening on port ${port}`)
-// })

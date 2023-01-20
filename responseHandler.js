@@ -1,3 +1,4 @@
+const { default: axios } = require("axios");
 const nodeCCAvenue = require("node-ccavenue");
 const ccav = new nodeCCAvenue.Configure({
   merchant_id: 1918298,
@@ -11,6 +12,13 @@ exports.postRes = async (request, response) => {
     const { encResp } = request.body;
     const decryptedJsonResponse = ccav.redirectResponseToJson(encResp);
     console.log(encResp, decryptedJsonResponse);
+
+    const res = await axios.post(
+      `https://apitest.ccavenue.com/apis/servlet/DoWebTrans?enc_request=${encResp}&access_code=AVXX94KA47AN39XXNA&request_type=json&command=orderStatusTracker&order_no=${decryptedJsonResponse.order_id}`
+    );
+
+    console.log(res, "<------------------------");
+
     if (decryptedJsonResponse.order_status === "Success") {
       const data = await StaffForm.findOneAndUpdate(
         { orderId: decryptedJsonResponse.order_id },

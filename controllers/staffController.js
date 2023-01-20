@@ -7,8 +7,31 @@ const { Staff, StaffForm } = require("../model/staff/staffModel");
 const streamUpload = require("../middleware/uploadImage");
 const sendMail = require("../utils/sendMail");
 const otpGenerator = require("otp-generator");
+const nodeCCAvenue = require("node-ccavenue");
+const ccav = new nodeCCAvenue.Configure({
+  merchant_id: 1918298,
+  working_key: "BD81D9FE1E0C9E2E624FB70E89F01C90",
+});
 
 const crypto = require("crypto");
+
+exports.isVerifyEmail = async (req, res) => {
+  try {
+    const dbres = await Staff.findById(req.user);
+
+    if (!dbres) {
+      return res.status(400).send("Something went wrong!");
+    }
+
+    const { verifyEmail } = dbres;
+
+    return res.status(200).send({ verifyEmail });
+
+    // console.log(dbres);
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};
 
 exports.registerUser = async (req, res, next) => {
   const { name, email, password, confirm_password } = req.body;
@@ -36,7 +59,6 @@ exports.registerUser = async (req, res, next) => {
     password,
     otp,
   });
-  console.log(staff);
   if (staff) {
     staff.save();
 
@@ -47,6 +69,8 @@ exports.registerUser = async (req, res, next) => {
       subject: "Email Verification",
       message: message,
     });
+
+    res.cookie("isVerify", false);
     return res.status(201).json({
       success: true,
       message: "Successfully created and Otp send to your email address!",
@@ -241,27 +265,31 @@ exports.resendEmailOtp = async (req, res) => {
   try {
     const { email } = req.body;
 
-    const user = await Staff.findOne({ email });
+    if (!email) {
+      return res.status(400).send("Send required field!");
+    }
 
+    const user = await Staff.findOne({ email: email });
     if (!user) {
       return res.status(404).send("User not found!");
     }
-
+    
     const otp = otpGenerator.generate(6, {
       upperCaseAlphabets: false,
       specialChars: false,
     });
-
+    
     user.otp = otp;
-    await user.save();
-
+    const data = await user.save();
+    
     const message = `Your otp for verification is ${otp}`;
-
+    
     sendMail({
       email,
       subject: "Email Verification",
       message: message,
     });
+    return res.status(200).send('Otp send on your Email!')
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -288,3 +316,45 @@ exports.verifyEmail = async (req, res) => {
     return res.status(500).send(error);
   }
 };
+
+// exports.confirmOrder = async (req, res) => {
+//   try {
+//     const { orderId, referenceNo } = req.body;
+
+//     if (!orderId || !referenceNo) {
+//       return res.status(400).send("Send all required field!");
+//     }
+
+//     const access_code = "AVXX94KA47AN39XXNA";
+//     const params = { order_no: orderId, reference_no: referenceNo };
+
+//     // const dataString = Object.keys(params)
+//     //   .map((key) => `${key}=${params[key]}`)
+//     //   .join("&");
+
+//     // console.log(dataString);
+//     // // Encrypt the data
+//     // const cipher = crypto.createCipheriv(
+//     //   "aes-128-cbc",
+//     //   "BD81D9FE1E0C9E2E624FB70E89F01C90",
+//     //   crypto.randomBytes(16)
+//     // );
+//     // const encReq = encryptedData;
+
+//     // let encryptedData = cipher.update(dataString, "utf8", "hex");
+//     // encryptedData += cipher.final("hex");
+
+//     const encReq = ccav.getEncryptedOrder(
+//       `${params.reference_no}|${params.order_no}|`
+//     );
+
+//     const ccavenue_res = await axios.post(
+//       `https://apitest.ccavenue.com/apis/servlet/DoWebTrans?enc_request=${encReq}&access_code=${access_code}&request_type=json&response_type=json&command=orderStatusTracker&reference_no=${referenceNo}`
+//     );
+
+//     console.log(ccavenue_res.data);
+//     return res.status(200).send(ccavenue_res.data);
+//   } catch (error) {
+//     return res.status(500).send(error);
+//   }
+// };

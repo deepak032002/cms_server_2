@@ -20,6 +20,9 @@ const {
   forgetPassword,
   resetPassword,
   verifyEmail,
+  confirmOrder,
+  resendEmailOtp,
+  isVerifyEmail,
 } = require("../../controllers/staffController");
 const reqhandler = require("../../requesHandler");
 const reshandler = require("../../responseHandler");
@@ -58,7 +61,11 @@ router.post("/paymentResponse", reshandler.postRes);
 
 router.post("/forget-password", forgetPassword);
 router.post("/reset-password", resetPassword);
-
 router.post("/verify-email", verifyEmail);
+router.get("/isverify-email", fetchUser, isVerifyEmail);
+router.post("/resend-email", resendEmailOtp);
+
+// router.post("/confirm-order", confirmOrder);
+// router.post("");
 
 module.exports = router;

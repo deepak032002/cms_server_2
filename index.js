@@ -7,12 +7,14 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const vacancy = require("./routes/vacancy/staffRoute");
 const user = require("./routes/vacancy/userRoute");
+const cookieParser = require("cookie-parser");
 
 require("./db")();
 const app = express();
 
 app.use(helmet());
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(morgan("combined"));
