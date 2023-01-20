@@ -14,6 +14,8 @@ const ccav = new nodeCCAvenue.Configure({
 });
 
 const crypto = require("crypto");
+const { default: axios } = require("axios");
+const querystring = require("querystring");
 
 exports.isVerifyEmail = async (req, res) => {
   try {
@@ -273,23 +275,23 @@ exports.resendEmailOtp = async (req, res) => {
     if (!user) {
       return res.status(404).send("User not found!");
     }
-    
+
     const otp = otpGenerator.generate(6, {
       upperCaseAlphabets: false,
       specialChars: false,
     });
-    
+
     user.otp = otp;
     const data = await user.save();
-    
+
     const message = `Your otp for verification is ${otp}`;
-    
+
     sendMail({
       email,
       subject: "Email Verification",
       message: message,
     });
-    return res.status(200).send('Otp send on your Email!')
+    return res.status(200).send("Otp send on your Email!");
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -317,44 +319,72 @@ exports.verifyEmail = async (req, res) => {
   }
 };
 
-// exports.confirmOrder = async (req, res) => {
-//   try {
-//     const { orderId, referenceNo } = req.body;
+exports.confirmOrder = async (req, res) => {
+  try {
+    const { orderId, referenceNo } = req.body;
 
-//     if (!orderId || !referenceNo) {
-//       return res.status(400).send("Send all required field!");
-//     }
+    if (!orderId || !referenceNo) {
+      return res.status(400).send("Send all required field!");
+    }
 
-//     const access_code = "AVXX94KA47AN39XXNA";
-//     const params = { order_no: orderId, reference_no: referenceNo };
+    const access_code = "AVXX94KA47AN39XXNA";
+    const params = { order_no: orderId, reference_no: referenceNo };
 
-//     // const dataString = Object.keys(params)
-//     //   .map((key) => `${key}=${params[key]}`)
-//     //   .join("&");
+    function encrypt(plainText, key = "BD81D9FE1E0C9E2E624FB70E89F01C90") {
+      const keyHash = crypto.createHash("md5").update(key).digest();
+      const initVector = Buffer.from([
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
+        0x0c, 0x0d, 0x0e, 0x0f,
+      ]);
+      const cipher = crypto.createCipheriv("aes-128-cbc", keyHash, initVector);
+      let encrypted = cipher.update(plainText, "utf8", "hex");
+      encrypted += cipher.final("hex");
+      return encrypted;
+    }
 
-//     // console.log(dataString);
-//     // // Encrypt the data
-//     // const cipher = crypto.createCipheriv(
-//     //   "aes-128-cbc",
-//     //   "BD81D9FE1E0C9E2E624FB70E89F01C90",
-//     //   crypto.randomBytes(16)
-//     // );
-//     // const encReq = encryptedData;
+    const crypto = require("crypto");
 
-//     // let encryptedData = cipher.update(dataString, "utf8", "hex");
-//     // encryptedData += cipher.final("hex");
+    function decrypt(encryptedText, key = "BD81D9FE1E0C9E2E624FB70E89F01C90") {
+      const keyHash = crypto.createHash("md5").update(key).digest();
+      const initVector = Buffer.from([
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
+        0x0c, 0x0d, 0x0e, 0x0f,
+      ]);
+      const encryptedTextBuffer = Buffer.from(encryptedText, "hex");
+      const decipher = crypto.createDecipheriv(
+        "aes-128-cbc",
+        keyHash,
+        initVector
+      );
+      let decrypted = decipher.update(encryptedTextBuffer, "binary", "utf8");
+      decrypted += decipher.final("utf8");
+      return decrypted;
+    }
 
-//     const encReq = ccav.getEncryptedOrder(
-//       `${params.reference_no}|${params.order_no}|`
-//     );
+    const encReq = encrypt(JSON.stringify(params));
 
-//     const ccavenue_res = await axios.post(
-//       `https://apitest.ccavenue.com/apis/servlet/DoWebTrans?enc_request=${encReq}&access_code=${access_code}&request_type=json&response_type=json&command=orderStatusTracker&reference_no=${referenceNo}`
-//     );
-
-//     console.log(ccavenue_res.data);
-//     return res.status(200).send(ccavenue_res.data);
-//   } catch (error) {
-//     return res.status(500).send(error);
-//   }
-// };
+    const final_data = querystring.stringify({
+      enc_request: encReq,
+      access_code: access_code,
+      command: "orderStatusTracker",
+      request_type: "JSON",
+      response_type: "JSON",
+    });
+    const ccavenue_res = await axios.post(
+      `https://apitest.ccavenue.com/apis/servlet/DoWebTrans`,
+      final_data,
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+    const info = querystring.parse(ccavenue_res.data);
+    if (info.enc_response) {
+      const payment_status = decrypt(info.enc_response);
+      return res.status(200).send(JSON.parse(payment_status));
+    }
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+};

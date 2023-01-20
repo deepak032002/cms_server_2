@@ -182,6 +182,10 @@ const staffFormSchema = mongoose.Schema(
       type: Boolean,
       required: true,
     },
+
+    paymentData: {
+      type: Object,
+    },
   },
   { timestamps: true }
 );
