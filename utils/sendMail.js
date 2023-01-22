@@ -14,12 +14,12 @@ const sendEmail = async (options) => {
   const mailOptions = {
     from: "no-reply-recruitment@cmseducation.org",
     to: options.email,
-    // to:"shubhjoshi114@gmail.com",
     subject: options.subject,
     text: options.message,
   };
 
-  await transporter.sendMail(mailOptions);
+  const res = await transporter.sendMail(mailOptions);
+  console.log(res, 'Email');
 };
 
 module.exports = sendEmail;
