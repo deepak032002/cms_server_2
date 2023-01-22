@@ -19,7 +19,8 @@ const sendEmail = async (options) => {
       text: options.message,
     };
 
-    await transporter.sendMail(mailOptions);
+    const res = await transporter.sendMail(mailOptions);
+    console.log(res);
   } catch (error) {
     console.log(error);
   }
