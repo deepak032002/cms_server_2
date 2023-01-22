@@ -18,11 +18,11 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(morgan("combined"));
-app.use("/api/", vacancy);
+app.use("/api", vacancy);
 app.use("/api/v1", user);
 
 app.get("/", (req, res) => {
-  res.send("Hello");
+  res.redirect('/api')
 });
 
 app.listen(8000, () => {
