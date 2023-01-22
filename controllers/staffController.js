@@ -1,5 +1,4 @@
 const bcrypt = require("bcrypt");
-const uniqueId = require("uniqid");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET;
 const staffSchemaValidate = require("../middleware/staffValidation");
@@ -8,8 +7,6 @@ const streamUpload = require("../middleware/uploadImage");
 const sendMail = require("../utils/sendMail");
 const otpGenerator = require("otp-generator");
 const crypto = require("crypto");
-const { default: axios } = require("axios");
-const querystring = require("querystring");
 
 exports.isVerifyEmail = async (req, res) => {
   try {
@@ -66,7 +63,6 @@ exports.registerUser = async (req, res, next) => {
       message: message,
     });
 
-    res.cookie("isVerify", false);
     return res.status(201).json({
       success: true,
       message: "Successfully created and Otp send to your email address!",
@@ -132,7 +128,7 @@ exports.staffForm = async (req, res) => {
     const image = await streamUpload(req);
     req.body.personal_details.image = image.secure_url;
     req.body.registrationNum = `ONL/MAR23/${
-      Math.floor(Math.random() * (1000000 - 99999 + 1)) + 99999
+      Math.floor(Math.random() * (1000000 - 100000 + 1)) + 100000
     }`;
     req.body.userId = req.user;
 
