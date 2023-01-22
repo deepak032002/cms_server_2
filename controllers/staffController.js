@@ -7,12 +7,6 @@ const { Staff, StaffForm } = require("../model/staff/staffModel");
 const streamUpload = require("../middleware/uploadImage");
 const sendMail = require("../utils/sendMail");
 const otpGenerator = require("otp-generator");
-const nodeCCAvenue = require("node-ccavenue");
-const ccav = new nodeCCAvenue.Configure({
-  merchant_id: 1918298,
-  working_key: "BD81D9FE1E0C9E2E624FB70E89F01C90",
-});
-
 const crypto = require("crypto");
 const { default: axios } = require("axios");
 const querystring = require("querystring");
@@ -103,7 +97,7 @@ exports.loginUser = async (req, res, next) => {
     if (!isPasswordMatch) {
       return res.status(409).json({
         authtoken: null,
-        msg: "Please login with correct credentials",
+        message: "Please login with correct credentials",
         signal: false,
       });
     }
@@ -114,7 +108,9 @@ exports.loginUser = async (req, res, next) => {
 
     const token = jwt.sign(data, JWT_SECRET);
 
-    res.status(200).json({ token, msg: "Login Succesfully!", success: true });
+    res
+      .status(200)
+      .json({ token, message: "Login Succesfully!", success: true });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error });
@@ -136,7 +132,7 @@ exports.staffForm = async (req, res) => {
     const image = await streamUpload(req);
     req.body.personal_details.image = image.secure_url;
     req.body.registrationNum = `ONL/MAR23/${
-      Math.floor(Math.random() * (10000000 - 9999999 + 1)) + 9999999
+      Math.floor(Math.random() * (1000000 - 99999 + 1)) + 99999
     }`;
     req.body.userId = req.user;
 
@@ -150,11 +146,11 @@ exports.staffForm = async (req, res) => {
       data.save();
       return res
         .status(201)
-        .json({ msg: "Created Successfully", success: true });
+        .json({ message: "Created Successfully", success: true });
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    res.status(500).send(error);
   }
 };
 
@@ -178,13 +174,13 @@ exports.staffFormUpdate = async (req, res) => {
     if (data) {
       return res
         .status(200)
-        .json({ msg: "Update Successfully", success: true });
+        .json({ message: "Update Successfully", success: true });
     }
 
     return res.status(404).send("User Not Valid!");
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    res.status(500).send(error);
   }
 };
 
@@ -205,7 +201,11 @@ exports.getform = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
   try {
-    const { resetToken, password } = req.body;
+    const { resetToken, password, confirm_password } = req.body;
+    3;
+    if (password !== confirm_password) {
+      return res.status(400).send("Password and Confirm Password not matched!");
+    }
 
     const staff = await Staff.findOne({
       passwordResetToken: resetToken,
@@ -224,7 +224,7 @@ exports.resetPassword = async (req, res) => {
     staff.passwordResetExpires = null;
     await staff.save();
 
-    res.status(200).send({ message: "Password reset successfully" });
+    return res.status(200).send({ message: "Password reset successfully" });
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -247,8 +247,8 @@ exports.forgetPassword = async (req, res) => {
 
     const message = `
     Dear User,
-    This email is reset your password
-    Your link to reset password - ${process.env.FRONTEND_URL}/reset-password?resetToken=${resetToken}
+      This email is to reset your password
+      Your link to reset password - ${process.env.FRONTEND_URL}/reset-password/${resetToken}
     `;
 
     await sendMail({
@@ -309,6 +309,7 @@ exports.verifyEmail = async (req, res) => {
 
     if (user.otp === otp) {
       user.verifyEmail = true;
+      user.otp = null;
       user.save();
       return res.status(200).send("Successful verified your email!");
     }
@@ -319,72 +320,70 @@ exports.verifyEmail = async (req, res) => {
   }
 };
 
-exports.confirmOrder = async (req, res) => {
-  try {
-    const { orderId, referenceNo } = req.body;
+// exports.confirmOrder = async (req, res) => {
+//   try {
+//     const { orderId, referenceNo } = req.body;
 
-    if (!orderId || !referenceNo) {
-      return res.status(400).send("Send all required field!");
-    }
+//     if (!orderId || !referenceNo) {
+//       return res.status(400).send("Send all required field!");
+//     }
 
-    const access_code = "AVXX94KA47AN39XXNA";
-    const params = { order_no: orderId, reference_no: referenceNo };
+//     const access_code = "AVXX94KA47AN39XXNA";
+//     const params = { order_no: orderId, reference_no: referenceNo };
 
-    function encrypt(plainText, key = "BD81D9FE1E0C9E2E624FB70E89F01C90") {
-      const keyHash = crypto.createHash("md5").update(key).digest();
-      const initVector = Buffer.from([
-        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
-        0x0c, 0x0d, 0x0e, 0x0f,
-      ]);
-      const cipher = crypto.createCipheriv("aes-128-cbc", keyHash, initVector);
-      let encrypted = cipher.update(plainText, "utf8", "hex");
-      encrypted += cipher.final("hex");
-      return encrypted;
-    }
+//     function encrypt(plainText, key = "BD81D9FE1E0C9E2E624FB70E89F01C90") {
+//       const keyHash = crypto.createHash("md5").update(key).digest();
+//       const initVector = Buffer.from([
+//         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
+//         0x0c, 0x0d, 0x0e, 0x0f,
+//       ]);
+//       const cipher = crypto.createCipheriv("aes-128-cbc", keyHash, initVector);
+//       let encrypted = cipher.update(plainText, "utf8", "hex");
+//       encrypted += cipher.final("hex");
+//       return encrypted;
+//     }
 
-    const crypto = require("crypto");
+//     function decrypt(encryptedText, key = "BD81D9FE1E0C9E2E624FB70E89F01C90") {
+//       const keyHash = crypto.createHash("md5").update(key).digest();
+//       const initVector = Buffer.from([
+//         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
+//         0x0c, 0x0d, 0x0e, 0x0f,
+//       ]);
+//       const encryptedTextBuffer = Buffer.from(encryptedText, "hex");
+//       const decipher = crypto.createDecipheriv(
+//         "aes-128-cbc",
+//         keyHash,
+//         initVector
+//       );
+//       let decrypted = decipher.update(encryptedTextBuffer, "binary", "utf8");
+//       decrypted += decipher.final("utf8");
+//       return decrypted;
+//     }
 
-    function decrypt(encryptedText, key = "BD81D9FE1E0C9E2E624FB70E89F01C90") {
-      const keyHash = crypto.createHash("md5").update(key).digest();
-      const initVector = Buffer.from([
-        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
-        0x0c, 0x0d, 0x0e, 0x0f,
-      ]);
-      const encryptedTextBuffer = Buffer.from(encryptedText, "hex");
-      const decipher = crypto.createDecipheriv(
-        "aes-128-cbc",
-        keyHash,
-        initVector
-      );
-      let decrypted = decipher.update(encryptedTextBuffer, "binary", "utf8");
-      decrypted += decipher.final("utf8");
-      return decrypted;
-    }
+//     const encReq = encrypt(JSON.stringify(params));
 
-    const encReq = encrypt(JSON.stringify(params));
-
-    const final_data = querystring.stringify({
-      enc_request: encReq,
-      access_code: access_code,
-      command: "orderStatusTracker",
-      request_type: "JSON",
-      response_type: "JSON",
-    });
-    const ccavenue_res = await axios.post(
-      `https://apitest.ccavenue.com/apis/servlet/DoWebTrans`,
-      final_data,
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      }
-    );
-    const info = querystring.parse(ccavenue_res.data);
-    if (info.enc_response) {
-      const payment_status = decrypt(info.enc_response);
-      return res.status(200).send(JSON.parse(payment_status));
-    }
-  } catch (error) {
-    return res.status(500).send(error);
-  }
-};
+//     const final_data = querystring.stringify({
+//       enc_request: encReq,
+//       access_code: access_code,
+//       command: "orderStatusTracker",
+//       request_type: "JSON",
+//       response_type: "JSON",
+//     });
+//     const ccavenue_res = await axios.post(
+//       `https://apitest.ccavenue.com/apis/servlet/DoWebTrans`,
+//       final_data,
+//       {
+//         headers: {
+//           "Content-Type": "application/x-www-form-urlencoded",
+//         },
+//       }
+//     );
+//     const info = querystring.parse(ccavenue_res.data);
+//     if (info.enc_response) {
+//       const payment_status = decrypt(info.enc_response);
+//       return res.status(200).send(JSON.parse(payment_status));
+//     }
+//   } catch (error) {
+//     return res.status(500).send(error);
+//   }
+// };
