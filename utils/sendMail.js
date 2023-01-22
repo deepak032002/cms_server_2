@@ -5,7 +5,7 @@ const sendEmail = async (options) => {
     const transporter = nodeMailer.createTransport({
       host: "smtp.gmail.com",
       secure: true,
-      port: 587,
+      port: 465,
       auth: {
         user: "no-reply-recruitment@cmseducation.org",
         pass: "$^&NoRec",
