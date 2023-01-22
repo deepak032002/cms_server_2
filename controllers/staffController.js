@@ -4,7 +4,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const staffSchemaValidate = require("../middleware/staffValidation");
 const { Staff, StaffForm } = require("../model/staff/staffModel");
 const streamUpload = require("../middleware/uploadImage");
-const sendMail = require("../utils/sendMail");
+const sendEmail = require("../utils/sendMail");
 const otpGenerator = require("otp-generator");
 const crypto = require("crypto");
 
@@ -57,7 +57,7 @@ exports.registerUser = async (req, res, next) => {
 
     const message = `Your otp for verification is ${otp}`;
 
-    sendMail({
+    sendEmail({
       email,
       subject: "Email Verification",
       message: message,
@@ -247,7 +247,7 @@ exports.forgetPassword = async (req, res) => {
       Your link to reset password - ${process.env.FRONTEND_URL}/reset-password/${resetToken}
     `;
 
-    await sendMail({
+    await sendEmail({
       email,
       subject: "Password Reset Email",
       message: message,
@@ -282,7 +282,7 @@ exports.resendEmailOtp = async (req, res) => {
 
     const message = `Your otp for verification is ${otp}`;
 
-    sendMail({
+    sendEmail({
       email,
       subject: "Email Verification",
       message: message,

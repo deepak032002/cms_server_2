@@ -9,6 +9,7 @@ const ccav = new nodeCCAvenue.Configure({
 });
 
 const { StaffForm } = require("./model/staff/staffModel");
+const sendEmail = require("./utils/sendMail");
 
 function encrypt(plainText, key = "BD81D9FE1E0C9E2E624FB70E89F01C90") {
   const keyHash = crypto.createHash("md5").update(key).digest();
@@ -70,13 +71,35 @@ exports.postRes = async (request, response) => {
 
     const info = querystring.parse(ccavenue_res.data);
     if (info.enc_response) {
+      console.log(info.enc_response);
       const payment_status = decrypt(info.enc_response);
       const data = await StaffForm.findOneAndUpdate(
         { orderId: decryptedJsonResponse.order_id },
-        { paymentConfirmation: true, paymentData: JSON.parse(payment_status) }
+        {
+          paymentConfirmation: true,
+          paymentData: JSON.parse(payment_status),
+          orderId: null,
+        }
       );
 
-      if (data) {
+      if (
+        data &&
+        JSON.parse(payment_status)?.Order_Status_Result?.order_bank_response ===
+          "Y"
+      ) {
+        const message = `
+        Dear Candidate,
+          Your Payment successfully completed
+          Your order-id ${decryptedJsonResponse?.order_id} for Registration No. - ${data?.registrationNum}
+          We contact you soon!
+        `;
+
+        await sendEmail({
+          email: data?.personal_details?.email,
+          subject: "Successfull registration!",
+          message: message,
+        });
+
         return response.redirect(
           `${process.env.FRONTEND_URL}/paymentSuccess?status=success&orderNo=${decryptedJsonResponse.order_id}&amount=${decryptedJsonResponse.amount}`
         );
