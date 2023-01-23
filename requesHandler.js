@@ -36,10 +36,10 @@ exports.postReq = async (request, response) => {
       currency: "INR",
       amount: "600",
       cancel_url: encodeURIComponent(
-        `${process.env.REDIRECT_URL}/vacancy/paymentResponse/`
+        `${process.env.REDIRECT_URL}/api/paymentResponse/`
       ),
       redirect_url: encodeURIComponent(
-        `${process.env.REDIRECT_URL}/vacancy/paymentResponse/`
+        `${process.env.REDIRECT_URL}/api/paymentResponse/`
       ),
       billing_name: request.body.billing_name,
     };
