@@ -7,20 +7,20 @@ const sendEmail = async (options) => {
       secure: true,
       port: 587,
       auth: {
-        user: "reply3258@gmail.com",
-        pass: "housnpfkojkoklfr",
+        user: "no-reply-recruitment@cmseducation.org",
+        pass: "$^&NoRec",
       },
     });
 
     const mailOptions = {
-      from: "reply3258@gmail.com",
+      from: "no-reply-recruitment@cmseducation.org",
       to: options.email,
       subject: options.subject,
       text: options.message,
     };
 
-    await transporter.sendMail(mailOptions);
-    return;
+    const res = await transporter.sendMail(mailOptions);
+    console.log(res);
   } catch (error) {
     console.log(error);
   }
