@@ -282,11 +282,12 @@ exports.resendEmailOtp = async (req, res) => {
 
     const message = `Your otp for verification is ${otp}`;
 
-    sendEmail({
+    await sendEmail({
       email,
       subject: "Email Verification",
       message: message,
     });
+    
     return res.status(200).send("Otp send on your Email!");
   } catch (error) {
     return res.status(500).send(error);
