@@ -3,17 +3,17 @@ const nodeMailer = require("nodemailer");
 const sendEmail = async (options) => {
   try {
     const transporter = nodeMailer.createTransport({
-      host: "smtp.gmail.com",
+      host: "smtppro.zoho.in",
       secure: true,
-      port: 587,
+      port: 465,
       auth: {
-        user: "no-reply-recruitment@cmseducation.org",
-        pass: "$^&NoRec",
+        user: "cmstest21@zohomail.in",
+        pass: "cJwJm4jzM#hKEPd",
       },
     });
 
     const mailOptions = {
-      from: "no-reply-recruitment@cmseducation.org",
+      from: "cmstest21@zohomail.in",
       to: options.email,
       subject: options.subject,
       text: options.message,
