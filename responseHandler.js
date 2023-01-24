@@ -40,8 +40,8 @@ exports.postRes = async (request, response) => {
   try {
     const { encResp } = request.body;
     const decryptedJsonResponse = ccav.redirectResponseToJson(encResp);
+    // return response.send('hhh')
     console.log(encResp, decryptedJsonResponse);
-
     const { order_id, tracking_id } = decryptedJsonResponse;
 
     // #####################################
