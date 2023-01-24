@@ -86,9 +86,8 @@ exports.postRes = async (request, response) => {
       );
 
       if (
-        data &&
         JSON.parse(payment_status)?.Order_Status_Result?.order_bank_response ===
-          "Y"
+        "Y"
       ) {
         const message = `
         Dear Candidate,
@@ -97,7 +96,7 @@ exports.postRes = async (request, response) => {
           We contact you soon!
         `;
 
-        await sendEmail({
+        sendEmail({
           email: data?.personal_details?.email,
           subject: "Successfull registration!",
           message: message,
