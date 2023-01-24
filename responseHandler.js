@@ -73,10 +73,13 @@ exports.postRes = async (request, response) => {
     if (info.enc_response) {
       console.log(info.enc_response);
       const payment_status = decrypt(info.enc_response);
+
       const data = await StaffForm.findOneAndUpdate(
         { orderId: decryptedJsonResponse.order_id },
         {
-          paymentConfirmation: true,
+          paymentConfirmation:
+            JSON.parse(payment_status)?.Order_Status_Result
+              ?.order_bank_response === "Y",
           paymentData: JSON.parse(payment_status),
           orderId: null,
         }

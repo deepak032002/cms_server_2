@@ -22,7 +22,7 @@ app.use("/api", vacancy);
 app.use("/api/v1", user);
 
 app.get("/", (req, res) => {
-  res.redirect('/api')
+  res.status(200).send('Hello')
 });
 
 app.listen(8000, () => {
