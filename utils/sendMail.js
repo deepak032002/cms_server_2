@@ -4,16 +4,16 @@ const sendEmail = async (options) => {
   try {
     const transporter = nodeMailer.createTransport({
       host: "smtp.gmail.com",
-      secure: false,
-      port: 587,
+      secure: true,
+      port: 465,
       auth: {
-        user: "vishu.pal@cmseducation.org",
-        pass: "P@ss2023",
+        user: "reply3258@gmail.com",
+        pass: "housnpfkojkoklfr",
       },
     });
 
     const mailOptions = {
-      from: "vishu.pal@cmseducation.org",
+      from: "reply325@gmail.com",
       to: options.email,
       subject: options.subject,
       text: options.message,
@@ -25,5 +25,3 @@ const sendEmail = async (options) => {
     console.log(error);
   }
 };
-
-module.exports = sendEmail;
