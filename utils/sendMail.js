@@ -25,3 +25,5 @@ const sendEmail = async (options) => {
     console.log(error);
   }
 };
+
+module.exports = sendEmail
