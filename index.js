@@ -8,6 +8,7 @@ const morgan = require("morgan");
 const vacancy = require("./routes/vacancy/staffRoute");
 const user = require("./routes/vacancy/userRoute");
 const cookieParser = require("cookie-parser");
+const admin = require("./routes/vacancy/adminRoutes");
 
 require("./db")();
 const app = express();
@@ -20,9 +21,10 @@ app.use(cors());
 app.use(morgan("combined"));
 app.use("/api", vacancy);
 app.use("/api/v1", user);
+app.use("/api/v1", admin);
 
 app.get("/", (req, res) => {
-  res.status(200).send('Hello')
+  res.status(200).send("Hello");
 });
 
 app.listen(8000, () => {
