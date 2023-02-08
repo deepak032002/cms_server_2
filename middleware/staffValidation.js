@@ -18,7 +18,7 @@ const staffSchemaValidate = Joi.object().keys({
     middle_name: Joi.string().allow(null, ""),
     last_name: Joi.string().required(),
     dob: Joi.date().required(),
-    image: Joi.string().required(),
+    image: Joi.string(),
     father: Joi.object({
       name: Joi.string().required(),
       mobile: Joi.number().required(),

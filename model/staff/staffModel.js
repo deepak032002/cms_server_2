@@ -174,17 +174,26 @@ const staffFormSchema = mongoose.Schema(
       required: true,
     },
 
+    trainings: {
+      type: Array,
+      default: [
+        { name: "B.ed",isDo: false },
+        { name: "LT", isDo: false },
+        { name: "NTT", isDo: false },
+        { name: "M.ed", isDo: false },
+        { name: "NIS", isDo: false },
+      ],
+    },
+
     isShortlisted: {
       type: Boolean,
-      required: true,
     },
     paymentConfirmation: {
       type: Boolean,
-      required: true,
     },
 
     paymentData: {
-      type: Object,
+      type: Array,
     },
   },
   { timestamps: true }

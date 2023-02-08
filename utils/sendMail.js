@@ -7,13 +7,13 @@ const sendEmail = async (options) => {
       secure: true,
       port: 465,
       auth: {
-        user: "reply3258@gmail.com",
-        pass: "housnpfkojkoklfr",
+        user: "vishu.pal@cmseducation.org",
+        pass: "P@ss1998",
       },
     });
 
     const mailOptions = {
-      from: "reply325@gmail.com",
+      from: "vishu.pal@cmseducation.org",
       to: options.email,
       subject: options.subject,
       text: options.message,

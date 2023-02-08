@@ -152,21 +152,23 @@ exports.staffForm = async (req, res) => {
 
 exports.staffFormUpdate = async (req, res) => {
   try {
-    if (typeof req.body.personal_details.image !== "string") {
-      const image = await streamUpload(req);
-      req.body.personal_details.image = image.secure_url;
-    }
 
+    // if (typeof req.body.personal_details.image !== "string") {
+    //   const image = await streamUpload(req);
+    //   req.body.personal_details.image = image.secure_url;
+    // }
+    
     const { error } = staffSchemaValidate.validate(req.body);
-
+    
+    
     if (error) {
       return res.status(400).json({ error: error.details, success: false });
     }
+
     const data = await StaffForm.findOneAndUpdate(
       { userId: req.user },
       req.body
     );
-
     if (data) {
       return res
         .status(200)
@@ -287,7 +289,7 @@ exports.resendEmailOtp = async (req, res) => {
       subject: "Email Verification",
       message: message,
     });
-    
+
     return res.status(200).send("Otp send on your Email!");
   } catch (error) {
     return res.status(500).send(error);

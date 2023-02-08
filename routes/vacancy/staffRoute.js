@@ -1,13 +1,5 @@
 const { Router } = require("express");
 const fetchUser = require("../../middleware/fetchUser");
-
-const cloudinary = require("cloudinary").v2;
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET,
-});
-
 const multer = require("multer");
 const router = Router();
 const {
@@ -65,7 +57,5 @@ router.post("/verify-email", verifyEmail);
 router.get("/isverify-email", fetchUser, isVerifyEmail);
 router.post("/resend-email", resendEmailOtp);
 
-// router.post("/confirm-order", confirmOrder);
-// router.post("");
 
 module.exports = router;
