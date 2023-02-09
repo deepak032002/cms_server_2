@@ -16,7 +16,6 @@ let streamUpload = (req) => {
         reject(error);
       }
     });
-
     streamifier.createReadStream(req.file.buffer).pipe(stream);
   });
 };

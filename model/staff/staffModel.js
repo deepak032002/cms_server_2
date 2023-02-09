@@ -175,9 +175,14 @@ const staffFormSchema = mongoose.Schema(
     },
 
     trainings: {
-      type: Array,
+      type: [
+        {
+          name: String,
+          isDo: Boolean,
+        },
+      ],
       default: [
-        { name: "B.ed",isDo: false },
+        { name: "B.ed", isDo: false },
         { name: "LT", isDo: false },
         { name: "NTT", isDo: false },
         { name: "M.ed", isDo: false },
