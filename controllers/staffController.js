@@ -155,7 +155,6 @@ exports.staffFormUpdate = async (req, res) => {
   try {
     if (typeof req.body.personal_details.image !== "string") {
       const image = await streamUpload(req);
-      console.log(image);
       req.body.personal_details.image = image.secure_url;
     }
 

@@ -47,8 +47,8 @@ const staffSchemaValidate = Joi.object().keys({
   blood_relative: Joi.object(),
   before_working_in_payroll: Joi.string(),
   declaration: Joi.boolean().required(),
-  isShortlisted: Joi.boolean().required(),
-  paymentConfirmation: Joi.boolean().required(),
+  isShortlisted: Joi.boolean(),
+  paymentConfirmation: Joi.boolean(),
 }).unknown(true)
 
 module.exports = staffSchemaValidate;
