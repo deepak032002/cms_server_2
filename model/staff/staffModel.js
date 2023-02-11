@@ -104,6 +104,9 @@ const staffFormSchema = mongoose.Schema(
         type: String,
         required: true,
       },
+      spouse: {
+        type: String,
+      },
       aadhar_number: {
         type: Number,
         required: true,
@@ -123,6 +126,10 @@ const staffFormSchema = mongoose.Schema(
       current: {
         type: Object,
       },
+    },
+
+    payrollCms: {
+      type: Object,
     },
 
     academic_details: {
