@@ -11,6 +11,10 @@ const staffFormSchema = mongoose.Schema(
       type: String,
     },
 
+    orderList: {
+      type: Array,
+    },
+
     userId: {
       type: String,
       required: true,

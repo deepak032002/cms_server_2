@@ -54,7 +54,10 @@ exports.postReq = async (request, response) => {
 
     const data = await StaffForm.findOneAndUpdate(
       { userId: request.user },
-      { orderId: request.body.order_id }
+      {
+        orderId: request.body.order_id,
+        $push: { orderList: request.body.order_id },
+      }
     );
 
     if (data) {
