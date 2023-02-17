@@ -4,6 +4,8 @@ const ccav = new nodeCCAvenue.Configure({
   working_key: "BD81D9FE1E0C9E2E624FB70E89F01C90",
 });
 
+const orderid = require("order-id")("1918BD81D9FE1E0C9E2E624FB70E89F01C90298");
+
 const { StaffForm } = require("./model/staff/staffModel");
 
 // const encryptData = function (data) {
@@ -30,9 +32,11 @@ exports.postReq = async (request, response) => {
     if (!request.body.billing_name && !request.body.order_id) {
       return response.status(404).send("orderId and name must");
     }
-
+    const id = orderid.generate();
+    const orderId = "CMS-" + orderid.getTime(id);
+    
     const orderParams = {
-      order_id: request.body.order_id,
+      order_id: orderId,
       currency: "INR",
       amount: "600",
       cancel_url: encodeURIComponent(
@@ -55,8 +59,8 @@ exports.postReq = async (request, response) => {
     const data = await StaffForm.findOneAndUpdate(
       { userId: request.user },
       {
-        orderId: request.body.order_id,
-        $push: { orderList: request.body.order_id },
+        orderId: orderId,
+        $push: { orderList: orderId },
       }
     );
 
