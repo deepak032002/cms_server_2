@@ -73,12 +73,12 @@ exports.postRes = async (request, response) => {
     if (info.enc_response) {
       const payment_status = decrypt(info.enc_response);
       const data = await StaffForm.findOneAndUpdate(
-        { orderId: decryptedJsonResponse.order_id },
+        { orderId: order_id },
         {
           paymentConfirmation:
             JSON.parse(payment_status)?.Order_Status_Result
               ?.order_bank_response === "Y",
-          orderId: null,
+          trackingId: tracking_id,
           $push: { paymentData: JSON.parse(payment_status) },
         }
       );
@@ -99,7 +99,6 @@ exports.postRes = async (request, response) => {
           subject: "Successfull registration!",
           message: message,
         });
-        console.log("I am here");
         return response.redirect(
           `${process.env.FRONTEND_URL}/paymentSuccess?status=success&orderNo=${decryptedJsonResponse.order_id}&amount=${decryptedJsonResponse.amount}`
         );

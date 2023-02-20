@@ -155,6 +155,11 @@ const staffFormSchema = mongoose.Schema(
       required: true,
     },
 
+    trackingId: {
+      type: String,
+      unique: true,
+    },
+
     blood_relative: {
       type: Object,
     },
@@ -217,7 +222,7 @@ const staffFormSchema = mongoose.Schema(
 
 try {
   const StaffForm = mongoose.model("staffForm", staffFormSchema);
-  StaffForm.createIndexes();
+  // StaffForm.createIndexes();
   exports.StaffForm = StaffForm;
 } catch (error) {
   console.log(error);

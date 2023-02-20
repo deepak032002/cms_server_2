@@ -33,8 +33,17 @@ exports.postReq = async (request, response) => {
       return response.status(404).send("orderId and name must");
     }
     const id = orderid.generate();
-    const orderId = "CMS-" + orderid.getTime(id);
-    
+    let orderId = "";
+
+    while (true) {
+      orderId = "CMS-" + orderid.getTime(id);
+      let isExistOrderId = await StaffForm.findOne({ orderId: orderId });
+      console.log(isExistOrderId);
+      if (!isExistOrderId) {
+        break;
+      }
+    }
+
     const orderParams = {
       order_id: orderId,
       currency: "INR",
