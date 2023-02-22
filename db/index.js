@@ -7,6 +7,7 @@ const conn = async () => {
     if (res) {
       console.log("Connect To Database Successfully");
     }
+    return res;
   } catch (error) {
     console.error(error);
   }

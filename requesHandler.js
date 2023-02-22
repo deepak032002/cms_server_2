@@ -4,7 +4,7 @@ const ccav = new nodeCCAvenue.Configure({
   working_key: "BD81D9FE1E0C9E2E624FB70E89F01C90",
 });
 
-const orderid = require("order-id")("1918BD81D9FE1E0C9E2E624FB70E89F01C90298");
+const orderid = require("order-id")("1918BD81D9FE1EAC9E2E624FB70E89F01C90298");
 
 const { StaffForm } = require("./model/staff/staffModel");
 
@@ -38,11 +38,14 @@ exports.postReq = async (request, response) => {
     while (true) {
       orderId = "CMS-" + orderid.getTime(id);
       let isExistOrderId = await StaffForm.findOne({ orderId: orderId });
-      console.log(isExistOrderId);
       if (!isExistOrderId) {
         break;
       }
     }
+
+    request.session.orderId = orderId;
+
+    console.log(request.session);
 
     const orderParams = {
       order_id: orderId,

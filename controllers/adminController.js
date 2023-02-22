@@ -49,3 +49,16 @@ exports.allShortlistedApplications = catchAsyncErrors(
     });
   }
 );
+
+exports.applicantShortList = catchAsyncErrors(async (req, res, next) => {
+  const form = await StaffForm.findById(req.params.id);
+
+  if (!form) {
+    return next(new ErrorHander("Form Not Found!", 404));
+  }
+  form.isShortlisted = true;
+  const isSave = await form.save();
+  return res
+    .status(200)
+    .send({ msg: "Successfully Shortlisted!", success: true, isSave });
+});

@@ -19,6 +19,7 @@ const {
   countShortlistedApplications,
   allApplicants,
   allShortlistedApplications,
+  applicantShortList,
 } = require("../../controllers/adminController");
 
 router
@@ -41,5 +42,9 @@ router
     authorizeRoles("admin"),
     allShortlistedApplications
   );
+
+router
+  .route("/admin/applicant-shortlist/:id")
+  .patch(isAuthenticatedUser, authorizeRoles("admin"), applicantShortList);
 
 module.exports = router;

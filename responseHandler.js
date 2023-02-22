@@ -40,10 +40,16 @@ exports.postRes = async (request, response) => {
   try {
     const { encResp } = request.body;
     const decryptedJsonResponse = ccav.redirectResponseToJson(encResp);
-    // const decryptedJsonResponse = decrypt(encResp);
-    console.log(decryptedJsonResponse);
     const { order_id, tracking_id } = decryptedJsonResponse;
     // #####################################
+
+    console.log(request.session)
+
+    // if(request.session.orderParams.order_id !== order_id){
+    //   return response.redirect(
+    //     `${process.env.FRONTEND_URL}/paymentSuccess?status=failed&orderNo=${decryptedJsonResponse.order_id}&amount=${decryptedJsonResponse.amount}`
+    //   );
+    // }
 
     const access_code = "AVXX94KA47AN39XXNA";
     const params = { order_no: order_id, reference_no: tracking_id };
