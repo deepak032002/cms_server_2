@@ -47,9 +47,7 @@ const cookieParser = require("cookie-parser");
     app.use("/api", vacancy);
     app.use("/api/v1", user);
     app.use("/api/v1", admin);
-
-    // app.set("trust proxy", 1); // trust first proxy
-
+    
     app.get("/", (req, res) => {
       res.status(200).send("Hello");
     });

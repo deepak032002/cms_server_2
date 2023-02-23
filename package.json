@@ -35,6 +35,7 @@
     "order-id": "^2.1.2",
     "otp-generator": "^4.0.0",
     "querystring": "^0.2.1",
+    "razorpay": "^2.8.6",
     "streamifier": "^0.1.1",
     "uniqid": "^5.4.0"
   },

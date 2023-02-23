@@ -7,6 +7,8 @@ const streamUpload = require("../middleware/uploadImage");
 const sendEmail = require("../utils/sendMail");
 const otpGenerator = require("otp-generator");
 const crypto = require("crypto");
+const Razorpay = require("razorpay");
+const orderid = require("order-id")("1918BD81D9FE1EAC9E2E624FB70E89F01C90298");
 
 exports.isVerifyEmail = async (req, res) => {
   try {
@@ -315,6 +317,104 @@ exports.verifyEmail = async (req, res) => {
     return res.status(404).send("Invalid credentials!");
   } catch (error) {
     return res.status(500).send(error);
+  }
+};
+
+exports.paymentInitiator = async (req, res) => {
+  try {
+    var instance = new Razorpay({
+      key_id: "rzp_test_PaNcpmi3lpquPf",
+      key_secret: "ubzSq5WO6nK7QGlYj4od8JZJ",
+    });
+
+    const id = orderid.generate();
+    let orderId = orderid.getTime(id);
+
+    const options = {
+      amount: "600",
+      currency: "INR",
+      receipt: `${orderId}`,
+      payment_capture: 1,
+    };
+    const payment = await instance.orders.create(options);
+
+    const data = await StaffForm.findOneAndUpdate(
+      { userId: req.user },
+      {
+        orderId: payment.id,
+        $push: { orderList: payment.id },
+      }
+    );
+
+    return res.status(200).send(payment);
+  } catch (error) {}
+};
+
+exports.verifyPayment = async (req, res) => {
+  const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
+    req.body;
+
+  const generated_signature = crypto
+    .createHmac("sha256", "ubzSq5WO6nK7QGlYj4od8JZJ")
+    .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+    .digest("hex");
+
+  if (generated_signature === razorpay_signature) {
+    const data = await StaffForm.findOneAndUpdate(
+      { orderId: razorpay_order_id },
+      {
+        paymentConfirmation: true,
+        trackingId: razorpay_payment_id,
+        // $push: { paymentData: JSON.parse(payment_status) },
+      }
+    );
+
+    const message = `
+        Dear Candidate,
+          Your Payment successfully completed
+          Your order-id ${razorpay_order_id} for Registration No. - ${data?.registrationNum}
+          We contact you soon!
+        `;
+
+    sendEmail({
+      email: data?.personal_details?.email,
+      subject: "Successfull registration!",
+      message: message,
+    });
+    return res.status(200).json({
+      success: true,
+      orderId: razorpay_order_id,
+      amount: 600,
+      msg: "Payment Successfull!",
+    });
+  } else {
+    // Payment failed
+    const data = await StaffForm.findOneAndUpdate(
+      { orderId: razorpay_order_id },
+      {
+        paymentConfirmation: false,
+        trackingId: razorpay_payment_id,
+      }
+    );
+
+    const message = `
+        Dear Candidate,
+          Your Payment Unsuccessfull
+          Your order-id ${razorpay_order_id} for Registration No. - ${data?.registrationNum}
+          Please try again
+        `;
+
+    sendEmail({
+      email: data?.personal_details?.email,
+      subject: "Payment Failed!",
+      message: message,
+    });
+    return res.status(400).json({
+      msg: "Payment failed!",
+      success: false,
+      orderId: razorpay_order_id,
+      amount: 600,
+    });
   }
 };
 
