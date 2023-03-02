@@ -62,3 +62,27 @@ exports.applicantShortList = catchAsyncErrors(async (req, res, next) => {
     .status(200)
     .send({ msg: "Successfully Shortlisted!", success: true, isSave });
 });
+
+exports.search = catchAsyncErrors(async (req, res, next) => {
+  let { query, type } = req.body;
+
+  if (!query || !type) {
+    return res.status(400).send("Please enter some data");
+  }
+
+  if (type === "id") {
+    const result = await StaffForm.find({ registrationNum: query });
+
+    if (result.length === 0) return res.status(404).send("No data found!");
+
+    return res.status(200).send({ success: true, result });
+  }
+
+  const regex = new RegExp(query, "ig");
+  const result = await StaffForm.find({
+    "personal_details.first_name": regex,
+  });
+
+  if (result.length === 0) return res.status(404).send("No data found!");
+  return res.status(200).send({ success: true, result });
+});
