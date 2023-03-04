@@ -30,22 +30,44 @@ exports.countShortlistedApplications = catchAsyncErrors(
 );
 
 exports.allApplicants = catchAsyncErrors(async (req, res, next) => {
-  const allApplicants = await StaffForm.find();
+  const page = req.params.pageNumber;
+  const limit = req.params.pageSize;
+
+  console.log(page);
+  const allApplicants = await StaffForm.find()
+    .limit(limit * 1)
+    .skip((page - 1) * limit)
+    .exec();
+  const count = await StaffForm.countDocuments();
+
   res.status(200).json({
     success: true,
     data: allApplicants,
+    totalPages: Math.ceil(count / limit),
     message: "All Applicants",
+    total_count: count,
   });
 });
 exports.allShortlistedApplications = catchAsyncErrors(
   async (req, res, next) => {
+    const page = req.params.pageNumber;
+    const limit = req.params.pageSize;
     const allShortlistedApplications = await StaffForm.find({
       isShortlisted: true,
+    })
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .exec();
+    const count = await StaffForm.countDocuments({
+      isShortlisted: true,
     });
+
     res.status(200).json({
       success: true,
       data: allShortlistedApplications,
+      totalPages: Math.ceil(count / limit),
       message: "All Shortlisted Applicants",
+      total_count: count
     });
   }
 );

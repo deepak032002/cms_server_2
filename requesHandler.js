@@ -8,24 +8,6 @@ const orderid = require("order-id")("1918BD81D9FE1EAC9E2E624FB70E89F01C90298");
 
 const { StaffForm } = require("./model/staff/staffModel");
 
-// const encryptData = function (data) {
-//   const stringToEncrypt = `${workingKey}|${data.merchant_id}|${data.order_id}|${data.amount}|${data.currency}|${data.redirect_url}|${data.cancel_url}|${data.billing_name}|${data.billing_address}|${data.billing_city}|${data.billing_state}|${data.billing_zip}|${data.billing_country}|${data.billing_tel}|${data.billing_email}|${data.delivery_name}|${data.delivery_address}|${data.delivery_city}|${data.delivery_state}|${data.delivery_zip}|${data.delivery_country}|${data.delivery_tel}|${data.merchant_param1}|${data.merchant_param2}|${data.merchant_param3}|${data.merchant_param4}|${data.merchant_param5}`;
-//   // const iv = crypto.randomBytes(16);
-//   // const cipher = crypto.createCipheriv("aes-256-cbc", workingKey, iv);
-
-//   // // encrypt the data
-//   // let encrypted = cipher.update(stringToEncrypt, "utf8", "hex");
-//   // encrypted += cipher.final("hex");
-
-//   // return encrypted;
-
-//   const encryptedOrderData = ccav.getEncryptedOrder(stringToEncrypt);
-//   console.log(encryptedOrderData, "<---");
-
-//   return encryptedOrderData;
-//   // return encryptRequest(data);
-// };
-
 exports.postReq = async (request, response) => {
   try {
     const accessCode = "AVXX94KA47AN39XXNA";

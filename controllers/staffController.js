@@ -331,10 +331,10 @@ exports.paymentInitiator = async (req, res) => {
     let orderId = orderid.getTime(id);
 
     const options = {
-      amount: "600",
+      amount: 60000,
       currency: "INR",
       receipt: `${orderId}`,
-      payment_capture: 1,
+      payment_capture: 0,
     };
     const payment = await instance.orders.create(options);
 
