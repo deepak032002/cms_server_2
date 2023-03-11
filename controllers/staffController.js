@@ -155,25 +155,33 @@ exports.staffForm = async (req, res) => {
 
 exports.staffFormUpdate = async (req, res) => {
   try {
-    if (typeof req.body.personal_details.image !== "string") {
+    if (
+      req.body.personal_details?.image &&
+      typeof req.body.personal_details?.image !== "string"
+    ) {
       const image = await streamUpload(req);
       req.body.personal_details.image = image.secure_url;
     }
 
-    const { error } = staffSchemaValidate.validate(req.body);
+    // const { error } = staffSchemaValidate.validate(req.body);
 
-    if (error) {
-      return res.status(400).json({ error: error.details, success: false });
-    }
+    // if (error) {
+    //   return res.status(400).json({ error: error.details, success: false });
+    // }
 
     const data = await StaffForm.findOneAndUpdate(
       { userId: req.user },
-      req.body
+      {
+        $set: req.body,
+      },
+      {
+        new: true,
+      }
     );
     if (data) {
       return res
         .status(200)
-        .json({ message: "Update Successfully", success: true });
+        .json({ message: "Update Successfully", success: true, data });
     }
 
     return res.status(404).send("User Not Valid!");

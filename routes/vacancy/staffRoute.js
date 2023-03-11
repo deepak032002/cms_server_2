@@ -12,14 +12,14 @@ const {
   forgetPassword,
   resetPassword,
   verifyEmail,
-  confirmOrder,
+  // confirmOrder,
   resendEmailOtp,
   isVerifyEmail,
-  paymentInitiator,
-  verifyPayment,
+  // paymentInitiator,
+  // verifyPayment,
 } = require("../../controllers/staffController");
-// const reqhandler = require("../../requesHandler");
-// const reshandler = require("../../responseHandler");
+const reqhandler = require("../../requesHandler");
+const reshandler = require("../../responseHandler");
 const passwordHash = require("../../middleware/passwordHash");
 const upload = multer();
 
@@ -38,7 +38,7 @@ router.post(
   staffForm
 );
 
-router.put(
+router.patch(
   "/form",
   upload.single("personal_details[image]"),
   fetchUser,
@@ -49,10 +49,11 @@ router.put(
 router.get("/form", fetchUser, getform);
 
 // router.get("/encrypt", encryptData);
-// router.post("/paymentInitiator", fetchUser, reqhandler.postReq);
-// router.post("/paymentResponse", reshandler.postRes);
-router.get("/paymentInitiator", fetchUser, paymentInitiator);
-router.post("/paymentVerify", verifyPayment);
+router.post("/paymentInitiator", fetchUser, reqhandler.postReq);
+router.post("/paymentResponse", reshandler.postRes);
+
+// router.get("/paymentInitiator", fetchUser, paymentInitiator);
+// router.post("/paymentVerify", verifyPayment);
 router.post("/forget-password", forgetPassword);
 router.post("/reset-password", resetPassword);
 router.post("/verify-email", verifyEmail);

@@ -25,10 +25,6 @@ exports.postReq = async (request, response) => {
       }
     }
 
-    request.session.orderId = orderId;
-
-    console.log(request.session);
-
     const orderParams = {
       order_id: orderId,
       currency: "INR",

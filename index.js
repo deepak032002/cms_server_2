@@ -8,13 +8,10 @@ const morgan = require("morgan");
 const vacancy = require("./routes/vacancy/staffRoute");
 const user = require("./routes/vacancy/userRoute");
 const cookieParser = require("cookie-parser");
-// const session = require("express-session");
-// const MongoStore = require("connect-mongo");
 
 (async () => {
   try {
-    // const SESS_LIFETIME = 1000 * 60 * 60 * 2;
-    // const NODE_ENV = "development";
+
     const admin = require("./routes/vacancy/adminRoutes");
     const PORT = process.env.PORT || 8000;
     const app = express();
@@ -25,25 +22,6 @@ const cookieParser = require("cookie-parser");
     app.use(express.urlencoded({ extended: true }));
     app.use(cors());
     app.use(morgan("dev"));
-
-    // app.use(
-    //   session({
-    //     secret: "9AFE26E4A68335A443473A3E2FFC3",
-    //     resave: false,
-    //     store: MongoStore.create({
-    //       mongoUrl: process.env.DB,
-    //       collection: "session",
-    //       ttl: parseInt(SESS_LIFETIME) / 1000,
-    //     }),
-    //     cookie: {
-    //       sameSite: true,
-    //       secure: NODE_ENV === "production",
-    //       maxAge: parseInt(SESS_LIFETIME),
-    //     },
-    //     saveUninitialized: true,
-    //   })
-    // );
-
     app.use("/api", vacancy);
     app.use("/api/v1", user);
     app.use("/api/v1", admin);

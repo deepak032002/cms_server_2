@@ -43,7 +43,7 @@ exports.postRes = async (request, response) => {
     const { order_id, tracking_id } = decryptedJsonResponse;
     // #####################################
 
-    console.log(request.session)
+    // console.log(request.session);
 
     // if(request.session.orderParams.order_id !== order_id){
     //   return response.redirect(
@@ -73,21 +73,36 @@ exports.postRes = async (request, response) => {
         },
       }
     );
+    // return console.log(ccavenue_res);
 
     const info = querystring.parse(ccavenue_res.data);
-
     if (info.enc_response) {
       const payment_status = decrypt(info.enc_response);
-      const data = await StaffForm.findOneAndUpdate(
-        { orderId: order_id },
-        {
-          paymentConfirmation:
-            JSON.parse(payment_status)?.Order_Status_Result
-              ?.order_bank_response === "Y",
-          trackingId: tracking_id,
-          $push: { paymentData: JSON.parse(payment_status) },
-        }
-      );
+
+      // const data = await StaffForm.findOneAndUpdate(
+      //   { orderId: order_id },
+      //   {
+      //     paymentConfirmation:
+      //       JSON.parse(payment_status)?.Order_Status_Result
+      //         ?.order_bank_response === "Y",
+      //     trackingId: tracking_id,
+      //     $push: { paymentData: JSON.parse(payment_status) },
+      //   }
+      // );
+
+      const data = await StaffForm.findOne({ orderId: order_id });
+
+      if (data.paymentConfirmation === true)
+        return response.redirect(
+          `${process.env.FRONTEND_URL}/paymentSuccess?status=failed&orderNo=${decryptedJsonResponse.order_id}&amount=${decryptedJsonResponse.amount}`
+        );
+
+      data.paymentConfirmation =
+        JSON.parse(payment_status)?.Order_Status_Result?.order_bank_response ===
+        "Y";
+
+      data.paymentData = data.paymentData.concat(JSON.parse(payment_status));
+      await data.save();
 
       if (
         JSON.parse(payment_status)?.Order_Status_Result?.order_bank_response ===
@@ -105,6 +120,7 @@ exports.postRes = async (request, response) => {
           subject: "Successfull registration!",
           message: message,
         });
+
         return response.redirect(
           `${process.env.FRONTEND_URL}/paymentSuccess?status=success&orderNo=${decryptedJsonResponse.order_id}&amount=${decryptedJsonResponse.amount}`
         );
@@ -112,6 +128,18 @@ exports.postRes = async (request, response) => {
     }
 
     // #####################################
+
+    const message = `
+        Dear Candidate,
+          Your Payment failed
+          Your order-id ${decryptedJsonResponse?.order_id} for Registration No. - ${data?.registrationNum}s
+        `;
+
+    sendEmail({
+      email: data?.personal_details?.email,
+      subject: "Payment Failed",
+      message: message,
+    });
 
     return response.redirect(
       `${process.env.FRONTEND_URL}/paymentSuccess?status=failed&orderNo=${decryptedJsonResponse.order_id}&amount=${decryptedJsonResponse.amount}`

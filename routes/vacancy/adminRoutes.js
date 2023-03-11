@@ -48,4 +48,8 @@ router
   .route("/admin/applicant-shortlist/:id")
   .patch(isAuthenticatedUser, authorizeRoles("admin"), applicantShortList);
 
+router
+  .route("/admin/search")
+  .post(isAuthenticatedUser, authorizeRoles("admin"), search);
+
 module.exports = router;
