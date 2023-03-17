@@ -157,7 +157,7 @@ const staffFormSchema = mongoose.Schema(
 
     trackingId: {
       type: String,
-      unique: true,
+      // unique: true,
     },
 
     blood_relative: {
