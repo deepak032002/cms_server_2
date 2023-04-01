@@ -25,22 +25,26 @@ const {
 
 router
   .route("/admin/all-applicants")
-  .get(isAuthenticatedUser, authorizeRoles("admin"), countTotalApplications);
+  .get(
+    isAuthenticatedUser,
+    authorizeRoles("admin", "quad"),
+    countTotalApplications
+  );
 router
   .route("/admin/all-shortlisted-applicants")
   .get(
     isAuthenticatedUser,
-    authorizeRoles("admin"),
+    authorizeRoles("admin", "quad"),
     countShortlistedApplications
   );
 router
   .route("/admin/all-applicants-list/:pageNumber/:pageSize")
-  .get(isAuthenticatedUser, authorizeRoles("admin"), allApplicants);
+  .get(isAuthenticatedUser, authorizeRoles("admin", "quad"), allApplicants);
 router
   .route("/admin/all-shortlisted-applicants-list/:pageNumber/:pageSize")
   .get(
     isAuthenticatedUser,
-    authorizeRoles("admin"),
+    authorizeRoles("admin", "quad"),
     allShortlistedApplications
   );
 
@@ -50,6 +54,6 @@ router
 
 router
   .route("/admin/search")
-  .post(isAuthenticatedUser, authorizeRoles("admin"), search);
+  .post(isAuthenticatedUser, authorizeRoles("admin", "quad"), search);
 
 module.exports = router;
