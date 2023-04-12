@@ -1,5 +1,6 @@
 const dotenv = require("dotenv");
-dotenv.config({ path: "config/config.env" });
+dotenv.config({ path: "" });
+
 const express = require("express");
 require("./db")();
 const cors = require("cors");
@@ -11,7 +12,6 @@ const cookieParser = require("cookie-parser");
 
 (async () => {
   try {
-
     const admin = require("./routes/vacancy/adminRoutes");
     const PORT = process.env.PORT || 8000;
     const app = express();
@@ -25,7 +25,7 @@ const cookieParser = require("cookie-parser");
     app.use("/api", vacancy);
     app.use("/api/v1", user);
     app.use("/api/v1", admin);
-    
+
     app.get("/", (req, res) => {
       res.status(200).send("Hello");
     });
