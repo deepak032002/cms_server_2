@@ -21,6 +21,7 @@ const {
   allShortlistedApplications,
   applicantShortList,
   search,
+  getAllData,
 } = require("../../controllers/adminController");
 
 router
@@ -56,4 +57,7 @@ router
   .route("/admin/search")
   .post(isAuthenticatedUser, authorizeRoles("admin", "quad"), search);
 
+router
+  .route("/admin/get-all-data")
+  .get(isAuthenticatedUser, authorizeRoles("admin", "quad"), getAllData);
 module.exports = router;

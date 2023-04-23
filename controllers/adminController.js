@@ -1,10 +1,5 @@
 const ErrorHander = require("../utils/errorhander");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
-const User = require("../model/staff/userModel");
-const sendToken = require("../utils/jwtToken");
-const sendMail = require("../utils/sendMail");
-const cloudinary = require("cloudinary");
-const crypto = require("crypto");
 const { StaffForm } = require("../model/staff/staffModel");
 
 exports.countTotalApplications = catchAsyncErrors(async (req, res, next) => {
@@ -67,7 +62,7 @@ exports.allShortlistedApplications = catchAsyncErrors(
       data: allShortlistedApplications,
       totalPages: Math.ceil(count / limit),
       message: "All Shortlisted Applicants",
-      total_count: count
+      total_count: count,
     });
   }
 );
@@ -100,6 +95,24 @@ exports.search = catchAsyncErrors(async (req, res, next) => {
     return res.status(200).send({ success: true, result });
   }
 
+  if (type === "mobile") {
+    const result = await StaffForm.find({ "personal_details.mobile": query });
+
+    if (result.length === 0) return res.status(404).send("No data found!");
+
+    return res.status(200).send({ success: true, result });
+  }
+
+  if (type === "date") {
+    const result = await StaffForm.find()
+      .where("createdAt")
+      .gte(new Date(query.startDate))
+      .lte(new Date(query.endDate));
+
+    if (result.length === 0) return res.status(404).send("No data found!");
+    return res.status(200).send({ success: true, result });
+  }
+
   const regex = new RegExp(query, "ig");
   const result = await StaffForm.find({
     "personal_details.first_name": regex,
@@ -108,3 +121,15 @@ exports.search = catchAsyncErrors(async (req, res, next) => {
   if (result.length === 0) return res.status(404).send("No data found!");
   return res.status(200).send({ success: true, result });
 });
+
+exports.getAllData = async (req, res) => {
+  try {
+    const allApplicants = await StaffForm.find();
+    if (!allApplicants) return res.status(404).send("No Data Found");
+
+    return res.status(200).send({ success: true, allApplicants });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send(error);
+  }
+};
