@@ -22,6 +22,7 @@ const {
   applicantShortList,
   search,
   getAllData,
+  migrateData,
 } = require("../../controllers/adminController");
 
 router
@@ -60,4 +61,9 @@ router
 router
   .route("/admin/get-all-data")
   .get(isAuthenticatedUser, authorizeRoles("admin", "quad"), getAllData);
+
+router
+  .route("/admin/migrate-data")
+  .get(isAuthenticatedUser, authorizeRoles("admin"), migrateData);
+
 module.exports = router;

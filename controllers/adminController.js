@@ -1,6 +1,7 @@
 const ErrorHander = require("../utils/errorhander");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const { StaffForm } = require("../model/staff/staffModel");
+const { Sequelize } = require("sequelize");
 
 exports.countTotalApplications = catchAsyncErrors(async (req, res, next) => {
   const allAplications = await StaffForm.count();
@@ -131,5 +132,197 @@ exports.getAllData = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).send(error);
+  }
+};
+
+exports.migrateData = async (req, res) => {
+  try {
+    // migrate data from mongodb to ms sql server using sequelize1
+
+    const sequelize = new Sequelize(
+      "VacancyVishu",
+      "erp",
+      "$/)rTHYSeRvERki23(",
+      {
+        host: "18.135.212.105",
+        dialect: "mssql",
+      }
+    );
+
+    const { DataTypes } = require("sequelize");
+
+    const User = sequelize.define("User", {
+      registrationNum: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      orderId: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      orderList: {
+        type: DataTypes.JSON,
+        allowNull: true,
+      },
+      userId: {
+        type: DataTypes.STRING,
+      },
+      category: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      academic: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      subject: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      designation: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      campus_prefrence: {
+        type: DataTypes.JSON,
+        allowNull: false,
+      },
+      personal_details: {
+        type: DataTypes.JSON,
+        allowNull: false,
+      },
+      communication: {
+        type: DataTypes.JSON,
+        allowNull: false,
+      },
+      address: {
+        type: DataTypes.JSON,
+        allowNull: false,
+      },
+      payrollCms: {
+        type: DataTypes.JSON,
+        allowNull: true,
+      },
+      academic_details: {
+        type: DataTypes.JSON,
+        allowNull: false,
+      },
+      work_experience: {
+        type: DataTypes.JSON,
+        allowNull: false,
+      },
+      earliest_date_join: {
+        type: DataTypes.DATEONLY,
+        allowNull: false,
+      },
+      total_experience: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+      },
+      trackingId: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      blood_relative: {
+        type: DataTypes.JSON,
+        allowNull: true,
+      },
+      before_working_in_payroll: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      referenceName1: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      referenceName2: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      referenceMobile1: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      referenceMobile2: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      declaration: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+      },
+      trainings: {
+        type: DataTypes.JSON,
+        allowNull: false,
+        defaultValue: [
+          { name: "B.ed", isDo: false },
+          { name: "LT", isDo: false },
+          { name: "NTT", isDo: false },
+          { name: "M.ed", isDo: false },
+          { name: "NIS", isDo: false },
+        ],
+      },
+      isShortlisted: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+      },
+      paymentConfirmation: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+      },
+      paymentData: {
+        type: DataTypes.JSON,
+        allowNull: true,
+      },
+    });
+
+    sequelize.authenticate().then(async () => {
+      sequelize.sync({ force: true }).then(async () => {
+        const allform = await StaffForm.find();
+
+        allform.forEach(async (form) => {
+          await User.create({
+            registrationNum: form.registrationNum,
+            category: form.category,
+            academic: form.academic,
+            subject: form.subject,
+            campus_prefrence: form.campus_prefrence,
+            personal_details: form.personal_details,
+            communication: form.communication,
+            address: form.address,
+            academic_details: form.academic_details,
+            work_experience: form.work_experience,
+            earliest_date_join: form.earliest_date_join,
+            total_experience: form.total_experience,
+            blood_relative: form.blood_relative,
+            before_working_in_payroll: form.before_working_in_payroll,
+            referenceName1: form.referenceName1,
+            referenceName2: form.referenceName2,
+            referenceMobile1: form.referenceMobile1,
+            referenceMobile2: form.referenceMobile2,
+            declaration: form.declaration,
+            trainings: form.trainings,
+            paymentData: form.paymentData,
+            isShortlisted: form.isShortlisted,
+            paymentConfirmation: form.paymentConfirmation,
+            userId: form.userId,
+            orderId: form.orderId,
+            orderList: form.orderList,
+            designation: form.designation,
+            payrollCms: form.payrollCms,
+            trackingId: form.trackingId,
+          });
+        });
+
+        const allUsers = await User.findAll();
+
+        res
+          .status(200)
+          .send({ message: "Data Migrated Successfully", allUsers });
+      });
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Something went wrong!");
   }
 };

@@ -37,7 +37,6 @@ const staffSchemaValidate = Joi.object()
       marital_status: Joi.string().required(),
       aadhar_number: Joi.number().required(),
     }).required(),
-
     payrollCms: Joi.object(),
     communication: Joi.array().required(),
     address: Joi.object({
