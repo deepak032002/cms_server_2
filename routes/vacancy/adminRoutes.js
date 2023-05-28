@@ -29,24 +29,28 @@ router
   .route("/admin/all-applicants")
   .get(
     isAuthenticatedUser,
-    authorizeRoles("admin", "quad"),
+    authorizeRoles("admin", "quad", "helpdesk"),
     countTotalApplications
   );
 router
   .route("/admin/all-shortlisted-applicants")
   .get(
     isAuthenticatedUser,
-    authorizeRoles("admin", "quad"),
+    authorizeRoles("admin", "quad", "helpdesk"),
     countShortlistedApplications
   );
 router
   .route("/admin/all-applicants-list/:pageNumber/:pageSize")
-  .get(isAuthenticatedUser, authorizeRoles("admin", "quad"), allApplicants);
+  .get(
+    isAuthenticatedUser,
+    authorizeRoles("admin", "quad", "helpdesk"),
+    allApplicants
+  );
 router
   .route("/admin/all-shortlisted-applicants-list/:pageNumber/:pageSize")
   .get(
     isAuthenticatedUser,
-    authorizeRoles("admin", "quad"),
+    authorizeRoles("admin", "quad", "helpdesk"),
     allShortlistedApplications
   );
 
@@ -56,11 +60,19 @@ router
 
 router
   .route("/admin/search")
-  .post(isAuthenticatedUser, authorizeRoles("admin", "quad"), search);
+  .post(
+    isAuthenticatedUser,
+    authorizeRoles("admin", "quad", "helpdesk"),
+    search
+  );
 
 router
   .route("/admin/get-all-data")
-  .get(isAuthenticatedUser, authorizeRoles("admin", "quad"), getAllData);
+  .get(
+    isAuthenticatedUser,
+    authorizeRoles("admin", "quad", "helpdesk"),
+    getAllData
+  );
 
 router
   .route("/admin/migrate-data")
