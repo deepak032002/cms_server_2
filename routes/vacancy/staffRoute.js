@@ -1,6 +1,8 @@
 const { Router } = require("express");
 const fetchUser = require("../../middleware/fetchUser");
 const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("cloudinary").v2;
 const router = Router();
 const {
   registerUser,
@@ -21,7 +23,20 @@ const {
 const reqhandler = require("../../requesHandler");
 const reshandler = require("../../responseHandler");
 const passwordHash = require("../../middleware/passwordHash");
-const upload = multer();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "cms",
+  },
+});
+const upload = multer({ storage: storage });
 
 // Signup Staff
 router.post("/register", passwordHash, registerUser);
@@ -33,15 +48,15 @@ router.get("/getuser", fetchUser, getUser);
 // Create Staff Forms
 router.post(
   "/form",
-  upload.single("personal_details[image]"),
   fetchUser,
+  upload.single("personal_details[image]"),
   staffForm
 );
 
 router.patch(
   "/form",
-  upload.single("personal_details[image]"),
   fetchUser,
+  upload.single("personal_details[image]"),
   staffFormUpdate
 );
 

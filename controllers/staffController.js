@@ -127,8 +127,7 @@ exports.getUser = async (req, res, next) => {
 
 exports.staffForm = async (req, res) => {
   try {
-    const image = await streamUpload(req);
-    req.body.personal_details.image = image.secure_url;
+    req.body.personal_details.image = req.file.path;
 
     req.body.registrationNum = `ONL/MAR23/${
       Math.floor(Math.random() * (1000000 - 100000 + 1)) + 100000
@@ -159,15 +158,8 @@ exports.staffFormUpdate = async (req, res) => {
       req.body.personal_details?.image &&
       typeof req.body.personal_details?.image !== "string"
     ) {
-      const image = await streamUpload(req);
-      req.body.personal_details.image = image.secure_url;
+      req.body.personal_details.image = req.file.path;
     }
-
-    // const { error } = staffSchemaValidate.validate(req.body);
-
-    // if (error) {
-    //   return res.status(400).json({ error: error.details, success: false });
-    // }
 
     const data = await StaffForm.findOneAndUpdate(
       { userId: req.user },
